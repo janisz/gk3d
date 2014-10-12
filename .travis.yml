@@ -1,0 +1,15 @@
+language: cpp
+compiler:
+  - clang
+  - gcc
+before_install:
+    - sudo apt-get -qq install cmake
+    - sudo apt-get -qq install freeglut3 freeglut3-dev libglew1.5 libglew1.5-dev libglu1-mesa
+    - sudo apt-get -qq install libglu1-mesa-dev libgl1-mesa-glx libgl1-mesa-dev libxmu-dev libxi-dev
+script: cmake . && make
+os:
+    - linux
+    - osx
+matrix:
+  allow_failures:
+    - os: osx
