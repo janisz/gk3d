@@ -1,172 +1,223 @@
-//
-// File:        main.cpp
-// Author:      Matt Daisley
-// Created:     4/25/2012
-// Project:     Source code for Make a Cube in OpenGL
-// Description: Creates an OpenGL window and draws a 3D cube
-//              That the user can rotate using the arrow keys
-// 
-// Controls:    Left Arrow  - Rotate Left
-//              Right Arrow - Rotate Right
-//              Up Arrow    - Rotate Up
-//              Down Arrow  - Rotate Down     
+/*
+FPS control demo in GLUT by Nghia Ho
 
-// ----------------------------------------------------------
-// Includes
-// ----------------------------------------------------------
-#include <stdio.h>
-#include <stdarg.h>
-#include <math.h>
-#define GL_GLEXT_PROTOTYPES
-#ifdef __APPLE__
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
+SPACEBAR - toggle FPS control
+W,A,S,D - to move
+mouse - look around, inverted mouse
+left/right mouse - fly up/down
+ESC - quit
 
-// ----------------------------------------------------------
-// Function Prototypes
-// ----------------------------------------------------------
-void display();
-void specialKeys();
+*/
 
-// ----------------------------------------------------------
-// Global Variables
-// ----------------------------------------------------------
-double rotate_y=0;
-double rotate_x=0;
+#include <GL/freeglut.h>
+#include <iostream>
+#include <cmath>
 
-// ----------------------------------------------------------
-// display() Callback function
-// ----------------------------------------------------------
-void display(){
+#include "Camera.h"
 
-    //  Clear screen and Z-buffer
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+using namespace std;
 
-    // Reset transformations
-    glLoadIdentity();
+void Display();
+void Reshape (int w, int h);
+void Keyboard(unsigned char key, int x, int y);
+void KeyboardUp(unsigned char key, int x, int y);
+void MouseMotion(int x, int y);
+void Mouse(int button, int state, int x, int y);
+void Timer(int value);
+void Idle();
 
-    // Other Transformations
-    // glTranslatef( 0.1, 0.0, 0.0 );      // Not included
-    // glRotatef( 180, 0.0, 1.0, 0.0 );    // Not included
+void Grid();
 
-    // Rotate when user changes rotate_x and rotate_y
-    glRotatef( rotate_x, 1.0, 0.0, 0.0 );
-    glRotatef( rotate_y, 0.0, 1.0, 0.0 );
+Camera g_camera;
+bool g_key[256];
+bool g_shift_down = false;
+bool g_fps_mode = false;
+int g_viewport_width = 0;
+int g_viewport_height = 0;
+bool g_mouse_left_down = false;
+bool g_mouse_right_down = false;
 
-    // Other Transformations
-    // glScalef( 2.0, 2.0, 0.0 );          // Not included
+// Movement settings
+const float g_translation_speed = 0.05;
+const float g_rotation_speed = M_PI/180*0.2;
 
-    //Multi-colored side - FRONT
-    glBegin(GL_POLYGON);
+int main (int argc, char **argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
+    glutInitWindowSize(640, 480);
+    glutCreateWindow("FPS demo by Nghia Ho - Hit SPACEBAR to toggle FPS mode");
 
-    glColor3f( 1.0, 0.0, 0.0 );     glVertex3f(  0.5, -0.5, -0.5 );      // P1 is red
-    glColor3f( 0.0, 1.0, 0.0 );     glVertex3f(  0.5,  0.5, -0.5 );      // P2 is green
-    glColor3f( 0.0, 0.0, 1.0 );     glVertex3f( -0.5,  0.5, -0.5 );      // P3 is blue
-    glColor3f( 1.0, 0.0, 1.0 );     glVertex3f( -0.5, -0.5, -0.5 );      // P4 is purple
+    glutIgnoreKeyRepeat(1);
 
-    glEnd();
+    glutDisplayFunc(Display);
+    glutIdleFunc(Display);
+    glutReshapeFunc(Reshape);
+    glutMouseFunc(Mouse);
+    glutMotionFunc(MouseMotion);
+    glutPassiveMotionFunc(MouseMotion);
+    glutKeyboardFunc(Keyboard);
+    glutKeyboardUpFunc(KeyboardUp);
+    glutIdleFunc(Idle);
 
-    // White side - BACK
-    glBegin(GL_POLYGON);
-    glColor3f(   1.0,  1.0, 1.0 );
-    glVertex3f(  0.5, -0.5, 0.5 );
-    glVertex3f(  0.5,  0.5, 0.5 );
-    glVertex3f( -0.5,  0.5, 0.5 );
-    glVertex3f( -0.5, -0.5, 0.5 );
-    glEnd();
-
-    // Purple side - RIGHT
-    glBegin(GL_POLYGON);
-    glColor3f(  1.0,  0.0,  1.0 );
-    glVertex3f( 0.5, -0.5, -0.5 );
-    glVertex3f( 0.5,  0.5, -0.5 );
-    glVertex3f( 0.5,  0.5,  0.5 );
-    glVertex3f( 0.5, -0.5,  0.5 );
-    glEnd();
-
-    // Green side - LEFT
-    glBegin(GL_POLYGON);
-    glColor3f(   0.0,  1.0,  0.0 );
-    glVertex3f( -0.5, -0.5,  0.5 );
-    glVertex3f( -0.5,  0.5,  0.5 );
-    glVertex3f( -0.5,  0.5, -0.5 );
-    glVertex3f( -0.5, -0.5, -0.5 );
-    glEnd();
-
-    // Blue side - TOP
-    glBegin(GL_POLYGON);
-    glColor3f(   0.0,  0.0,  1.0 );
-    glVertex3f(  0.5,  0.5,  0.5 );
-    glVertex3f(  0.5,  0.5, -0.5 );
-    glVertex3f( -0.5,  0.5, -0.5 );
-    glVertex3f( -0.5,  0.5,  0.5 );
-    glEnd();
-
-    // Red side - BOTTOM
-    glBegin(GL_POLYGON);
-    glColor3f(   1.0,  0.0,  0.0 );
-    glVertex3f(  0.5, -0.5, -0.5 );
-    glVertex3f(  0.5, -0.5,  0.5 );
-    glVertex3f( -0.5, -0.5,  0.5 );
-    glVertex3f( -0.5, -0.5, -0.5 );
-    glEnd();
-
-    glFlush();
-    glutSwapBuffers();
-
-}
-
-// ----------------------------------------------------------
-// specialKeys() Callback Function
-// ----------------------------------------------------------
-void specialKeys( int key, int x, int y ) {
-
-    //  Right arrow - increase rotation by 5 degree
-    if (key == GLUT_KEY_RIGHT)
-        rotate_y += 5;
-
-        //  Left arrow - decrease rotation by 5 degree
-    else if (key == GLUT_KEY_LEFT)
-        rotate_y -= 5;
-
-    else if (key == GLUT_KEY_UP)
-        rotate_x += 5;
-
-    else if (key == GLUT_KEY_DOWN)
-        rotate_x -= 5;
-
-    //  Request display update
-    glutPostRedisplay();
-
-}
-
-// ----------------------------------------------------------
-// main() function
-// ----------------------------------------------------------
-int main(int argc, char* argv[]){
-
-    //  Initialize GLUT and process user parameters
-    glutInit(&argc,argv);
-
-    //  Request double buffered true color window with Z-buffer
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-
-    // Create window
-    glutCreateWindow("Awesome Cube");
-
-    //  Enable Z-buffer depth test
-    glEnable(GL_DEPTH_TEST);
-
-    // Callback functions
-    glutDisplayFunc(display);
-    glutSpecialFunc(specialKeys);
-
-    //  Pass control to GLUT for events
+    glutTimerFunc(1, Timer, 0);
     glutMainLoop();
 
-    //  Return to OS
     return 0;
+}
 
+void Grid()
+{
+    glPushMatrix();
+    glColor3f(1,1,1);
+
+    for(int i=-50; i < 50; i++) {
+        glBegin(GL_LINES);
+        glVertex3f(i, 0, -50);
+        glVertex3f(i, 0, 50);
+        glEnd();
+    }
+
+    for(int i=-50; i < 50; i++) {
+        glBegin(GL_LINES);
+        glVertex3f(-50, 0, i);
+        glVertex3f(50, 0, i);
+        glEnd();
+    }
+
+    glPopMatrix();
+}
+
+void Display (void) {
+    glClearColor (0.0,0.0,0.0,1.0); //clear the screen to black
+    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //clear the color buffer and the depth buffer
+    glLoadIdentity();
+
+    g_camera.Refresh();
+
+    glColor3f(0,1,0);
+
+    glutWireTeapot(0.5);
+    Grid();
+
+    glutSwapBuffers(); //swap the buffers
+}
+
+void Reshape (int w, int h) {
+    g_viewport_width = w;
+    g_viewport_height = h;
+
+    glViewport (0, 0, (GLsizei)w, (GLsizei)h); //set the viewport to the current window specifications
+    glMatrixMode (GL_PROJECTION); //set the matrix to projection
+
+    glLoadIdentity ();
+    gluPerspective (60, (GLfloat)w / (GLfloat)h, 0.1 , 100.0); //set the perspective (angle of sight, width, height, ,depth)
+    glMatrixMode (GL_MODELVIEW); //set the matrix back to model
+}
+
+void Keyboard(unsigned char key, int x, int y)
+{
+    if(key == 27) {
+        exit(0);
+    }
+
+    if(key == ' ') {
+        g_fps_mode = !g_fps_mode;
+
+        if(g_fps_mode) {
+            glutSetCursor(GLUT_CURSOR_NONE);
+            glutWarpPointer(g_viewport_width/2, g_viewport_height/2);
+        }
+        else {
+            glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
+        }
+    }
+
+    g_shift_down = glutGetModifiers() == GLUT_ACTIVE_SHIFT;
+
+    g_key[key] = true;
+}
+
+void KeyboardUp(unsigned char key, int x, int y)
+{
+    g_key[key] = false;
+}
+
+void Timer(int value)
+{
+    if(g_fps_mode) {
+        if(g_key['w'] || g_key['W']) {
+            g_camera.Move(g_translation_speed);
+        }
+        else if(g_key['s'] || g_key['S']) {
+            g_camera.Move(-g_translation_speed);
+        }
+        else if(g_key['a'] || g_key['A']) {
+            g_camera.Strafe(g_translation_speed);
+        }
+        else if(g_key['d'] || g_key['D']) {
+            g_camera.Strafe(-g_translation_speed);
+        }
+        else if(g_mouse_left_down) {
+            g_camera.Fly(-g_translation_speed);
+        }
+        else if(g_mouse_right_down) {
+            g_camera.Fly(g_translation_speed);
+        }
+    }
+
+    glutTimerFunc(1, Timer, 0);
+}
+
+void Idle()
+{
+    Display();
+}
+
+void Mouse(int button, int state, int x, int y)
+{
+    if(state == GLUT_DOWN) {
+        if(button == GLUT_LEFT_BUTTON) {
+            g_mouse_left_down = true;
+        }
+        else if(button == GLUT_RIGHT_BUTTON) {
+            g_mouse_right_down = true;
+        }
+    }
+    else if(state == GLUT_UP) {
+        if(button == GLUT_LEFT_BUTTON) {
+            g_mouse_left_down = false;
+        }
+        else if(button == GLUT_RIGHT_BUTTON) {
+            g_mouse_right_down = false;
+        }
+    }
+}
+
+void MouseMotion(int x, int y)
+{
+    // This variable is hack to stop glutWarpPointer from triggering an event callback to Mouse(...)
+    // This avoids it being called recursively and hanging up the event loop
+    static bool just_warped = false;
+
+    if(just_warped) {
+        just_warped = false;
+        return;
+    }
+
+    if(g_fps_mode) {
+        int dx = x - g_viewport_width/2;
+        int dy = y - g_viewport_height/2;
+
+        if(dx) {
+            g_camera.RotateYaw(g_rotation_speed*dx);
+        }
+
+        if(dy) {
+            g_camera.RotatePitch(g_rotation_speed*dy);
+        }
+
+        glutWarpPointer(g_viewport_width/2, g_viewport_height/2);
+
+        just_warped = true;
+    }
 }

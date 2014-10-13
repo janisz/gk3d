@@ -15,7 +15,9 @@ include_directories("${PROJECT_BINARY_DIR}")
 
 # Define sources, libs and executable
 set(EXECUTABLE_NAME "gk3d.out")
-add_executable(${EXECUTABLE_NAME} src/main.cpp)
+file(GLOB_RECURSE SOURCES "${CMAKE_SOURCE_DIR}/src/*.cpp")
+file(GLOB_RECURSE HEADERS "${CMAKE_SOURCE_DIR}/src/*.h")
+add_executable(${EXECUTABLE_NAME} ${SOURCES})
 
 # OpenGL
 find_package(OpenGL REQUIRED)
