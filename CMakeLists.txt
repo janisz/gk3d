@@ -8,6 +8,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
 endif()
 # (you can also set it on the command line: -D CMAKE_BUILD_TYPE=Release)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra")
+
 # Set version information in a config.h file
 set(gk3d_VERSION_MAJOR 0)
 set(gk3d_VERSION_MINOR 1)
