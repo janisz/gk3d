@@ -25,7 +25,7 @@ void Idle();
 
 void Grid();
 
-void LoadObj(const char * filename) ;
+void LoadObj(const char *filename);
 
 Camera g_camera;
 bool g_key[256];
@@ -45,7 +45,7 @@ std::vector<tinyobj::material_t> materials;
 
 int main(int argc, char **argv) {
     if (argc != 3) {
-        std::cout << "Usage:  "<<argv[0]<<"input0.obj input1.obj" << std::endl;
+        std::cout << "Usage:  " << argv[0] << "input0.obj input1.obj" << std::endl;
         exit(1);
     }
 
@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-void LoadObj(const char * filename) {
+void LoadObj(const char *filename) {
     std::string err = tinyobj::LoadObj(shapes, materials, filename);
 
     if (!err.empty()) {
@@ -93,16 +93,16 @@ void LoadObj(const char * filename) {
         printf("Size of shape[%ld].material_ids: %ld\n", i, shapes[i].mesh.material_ids.size());
         assert((shapes[i].mesh.indices.size() % 3) == 0);
         for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
-            printf("  idx[%ld] = %d, %d, %d. mat_id = %d\n", f, shapes[i].mesh.indices[3*f+0], shapes[i].mesh.indices[3*f+1], shapes[i].mesh.indices[3*f+2], shapes[i].mesh.material_ids[f]);
+            printf("  idx[%ld] = %d, %d, %d. mat_id = %d\n", f, shapes[i].mesh.indices[3 * f + 0], shapes[i].mesh.indices[3 * f + 1], shapes[i].mesh.indices[3 * f + 2], shapes[i].mesh.material_ids[f]);
         }
 
         printf("shape[%ld].vertices: %ld\n", i, shapes[i].mesh.positions.size());
         assert((shapes[i].mesh.positions.size() % 3) == 0);
         for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++) {
             printf("  v[%ld] = (%f, %f, %f)\n", v,
-                    shapes[i].mesh.positions[3*v+0],
-                    shapes[i].mesh.positions[3*v+1],
-                    shapes[i].mesh.positions[3*v+2]);
+                    shapes[i].mesh.positions[3 * v + 0],
+                    shapes[i].mesh.positions[3 * v + 1],
+                    shapes[i].mesh.positions[3 * v + 2]);
         }
     }
 
@@ -252,6 +252,25 @@ void Net() {
     glPopMatrix();
 }
 
+void People() {
+    glPushMatrix();
+    glTranslatef(4, 0, -2);
+    glScalef(0.01, 0.01, 0.01);
+    glTranslatef(0, 45, 0);
+    srand(0);
+    for (size_t i = 0; i < shapes.size(); ++i) {
+        glBegin(GL_TRIANGLES);
+        for (size_t f = 0; f < shapes[i].mesh.indices.size(); ++f) {
+            glColor3b(random()%255, random()%255, random()%255);
+            glVertex3f(shapes[i].mesh.positions[shapes[i].mesh.indices[f] * 3 + 0],
+                       shapes[i].mesh.positions[shapes[i].mesh.indices[f] * 3 + 1],
+                       shapes[i].mesh.positions[shapes[i].mesh.indices[f] * 3 + 2]);
+        }
+        glEnd();
+    }
+    glPopMatrix();
+}
+
 void Display(void) {
     glClearColor(0.0, 0.0, 0.0, 10.0); //clear the screen to black
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //clear the color buffer and the depth buffer
@@ -264,6 +283,7 @@ void Display(void) {
     Grid();
     Hall();
     Net();
+    People();
 
     glutSwapBuffers(); //swap the buffers
 }
