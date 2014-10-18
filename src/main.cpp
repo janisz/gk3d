@@ -271,15 +271,15 @@ void People() {
     glRotatef(120, 0, 1.0, 0);
     glScalef(0.01, 0.01, 0.01);
     glTranslatef(0, 45, 0);
-    srand(0);
+    glColor3f(1, 0.9, 0.8);
     loadFromMesh(models[1].shapes);
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef(4.5, 0, -3);
-    glScalef(0.01, 0.01, 0.01);
-    glTranslatef(0, 45, 0);
-    srand(0);
+    glTranslatef(3, 0, -4);
+    glScalef(0.008, 0.008, 0.008);
+    glTranslatef(0, 13, 0);
+    glColor3f(0.5, 0.5, 0.5);
     loadFromMesh(models[0].shapes);
     glPopMatrix();
 }
@@ -289,7 +289,6 @@ void loadFromMesh(std::vector<tinyobj::shape_t> shapes) {
         glBegin(GL_TRIANGLES);
         std::vector<unsigned int> indices = shapes[i].mesh.indices;
         for (size_t f = 0; f < indices.size(); ++f) {
-            glColor3b(random() % 255, random() % 255, random() % 255);
             glVertex3f(shapes[i].mesh.positions[indices[f] * 3 + 0],
                     shapes[i].mesh.positions[indices[f] * 3 + 1],
                     shapes[i].mesh.positions[indices[f] * 3 + 2]);
