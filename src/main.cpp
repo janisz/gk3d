@@ -34,14 +34,16 @@ bool g_mouse_left_down = false;
 bool g_mouse_right_down = false;
 
 // Movement settings
-const float g_translation_speed = 0.05;
-const float g_rotation_speed = M_PI / 180 * 0.2;
+const float g_translation_speed = 0.2;
+const float g_rotation_speed = M_PI / 180 * 0.1;
 
 int main(int argc, char **argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
-    glutInitWindowSize(640, 480);
-    glutCreateWindow("FPS demo by Nghia Ho - Hit SPACEBAR to toggle FPS mode");
+    glutInitWindowSize(800, 600);
+    glutCreateWindow("GK3D");
+    glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_DEPTH_TEST);
 
     glutIgnoreKeyRepeat(1);
 
@@ -70,9 +72,6 @@ void Grid() {
         glVertex3f(i, 0, -50);
         glVertex3f(i, 0, 50);
         glEnd();
-    }
-
-    for (int i = -50; i < 50; i++) {
         glBegin(GL_LINES);
         glVertex3f(-50, 0, i);
         glVertex3f(50, 0, i);
@@ -82,8 +81,70 @@ void Grid() {
     glPopMatrix();
 }
 
+void Hall() {
+    glPushMatrix();
+    glColor3f(1, 1, 1);
+
+    //FRONT
+    glBegin(GL_POLYGON);
+    glColor3f(0.5, 0.5, 0.5);
+    glVertex3f(20.0, 0.0, -10.0);
+    glVertex3f(20.0, 15.0, -10.0);
+    glVertex3f(-10.0, 15.0, -10.0);
+    glVertex3f(-10.0, 0.0, -10.0);
+
+    glEnd();
+
+    //BACK
+    glBegin(GL_POLYGON);
+    glColor3f(0.5, 0.5, 0.5);
+    glVertex3f(20.0, 0.0, 10.0);
+    glVertex3f(20.0, 15.0, 10.0);
+    glVertex3f(-10.0, 15.0, 10.0);
+    glVertex3f(-10.0, 0.0, 10.0);
+    glEnd();
+
+    //RIGHT
+    glBegin(GL_POLYGON);
+    glColor3f(0.75, 0.75, 0.75);
+    glVertex3f(20.0, 0.0, -10.0);
+    glVertex3f(20.0, 15.0, -10.0);
+    glVertex3f(20.0, 15.0, 10.0);
+    glVertex3f(20.0, 0.0, 10.0);
+    glEnd();
+
+    //LEFT
+    glBegin(GL_POLYGON);
+    glColor3f(0.75, 0.75, 0.75);
+    glVertex3f(-10.0, 0.0, 10.0);
+    glVertex3f(-10.0, 15.0, 10.0);
+    glVertex3f(-10.0, 15.0, -10.0);
+    glVertex3f(-10.0, 0.0, -10.0);
+    glEnd();
+
+    //TOP
+    glBegin(GL_POLYGON);
+    glColor3f(0.0, 0.0, 1.0);
+    glVertex3f(20.0, 15.0, 10.0);
+    glVertex3f(20.0, 15.0, -10.0);
+    glVertex3f(-10.0, 15.0, -10.0);
+    glVertex3f(-10.0, 15.0, 10.0);
+    glEnd();
+
+    //BOTTOM
+    glBegin(GL_POLYGON);
+    glColor3f(0.0, 1.0, 0.0);
+    glVertex3f(20.0, 0.0, -10.0);
+    glVertex3f(20.0, 0.0, 10.0);
+    glVertex3f(-10.0, 0.0, 10.0);
+    glVertex3f(-10.0, 0.0, -10.0);
+    glEnd();
+
+    glPopMatrix();
+}
+
 void Display(void) {
-    glClearColor(0.0, 0.0, 0.0, 1.0); //clear the screen to black
+    glClearColor(0.0, 0.0, 0.0, 10.0); //clear the screen to black
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //clear the color buffer and the depth buffer
     glLoadIdentity();
 
@@ -91,8 +152,8 @@ void Display(void) {
 
     glColor3f(0, 1, 0);
 
-    glutWireTeapot(0.5);
     Grid();
+    Hall();
 
     glutSwapBuffers(); //swap the buffers
 }
