@@ -27,6 +27,21 @@ find_package(GLUT REQUIRED)
 include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} )
 target_link_libraries(${EXECUTABLE_NAME} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 
+#OpenGL Mathematics
+include(ExternalProject)
+ExternalProject_Add(
+    glm
+    PREFIX ${CMAKE_SOURCE_DIR}/libs/glm
+    GIT_REPOSITORY https://github.com/g-truc/glm.git
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    LOG_DOWNLOAD ON
+    )
+ExternalProject_Get_Property(glm source_dir)
+set(GlmIncludeDir ${source_dir}/glm)
+include_directories(${GlmIncludeDir})
+
 # Install target
 install(TARGETS ${EXECUTABLE_NAME} DESTINATION bin)
 
