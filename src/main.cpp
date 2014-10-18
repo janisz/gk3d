@@ -1,6 +1,8 @@
 #include <GL/freeglut.h>
 #include <iostream>
 #include <cmath>
+#include <glm.hpp>
+#include <tiny_obj_loader.h>
 
 #include "Camera.h"
 

@@ -1,5 +1,6 @@
 #Change this if you need to target a specific CMake version
 cmake_minimum_required(VERSION 2.6)
+include(ExternalProject)
 project(gk3d)
 
 # Enable debug symbols by default
@@ -8,7 +9,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
 endif()
 # (you can also set it on the command line: -D CMAKE_BUILD_TYPE=Release)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 # Set version information in a config.h file
 set(gk3d_VERSION_MAJOR 0)
@@ -28,19 +29,31 @@ include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} )
 target_link_libraries(${EXECUTABLE_NAME} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 
 #OpenGL Mathematics
-include(ExternalProject)
 ExternalProject_Add(
     glm
     PREFIX ${CMAKE_SOURCE_DIR}/libs/glm
     GIT_REPOSITORY https://github.com/g-truc/glm.git
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
     INSTALL_COMMAND ""
     LOG_DOWNLOAD ON
     )
 ExternalProject_Get_Property(glm source_dir)
 set(GlmIncludeDir ${source_dir}/glm)
 include_directories(${GlmIncludeDir})
+add_dependencies(${EXECUTABLE_NAME} glm)
+
+# TinuObjLoader
+ExternalProject_Add(
+    tinyobjloader
+    PREFIX ${CMAKE_SOURCE_DIR}/libs/tinyobjloader
+    GIT_REPOSITORY https://github.com/syoyo/tinyobjloader.git
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_SOURCE_DIR}/libs/tinyobjloader
+    LOG_DOWNLOAD ON
+    )
+#TODO: Make it better
+set(tinyobjloader ${CMAKE_SOURCE_DIR}/libs/tinyobjloader)
+include_directories(${tinyobjloader}/include)
+target_link_libraries(${EXECUTABLE_NAME} ${tinyobjloader}/lib/)
+add_dependencies(${EXECUTABLE_NAME} tinyobjloader)
 
 # Install target
 install(TARGETS ${EXECUTABLE_NAME} DESTINATION bin)
