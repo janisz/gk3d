@@ -1,10 +1,6 @@
 #ifndef __CAMERA_H__
 #define __CAMERA_H__
 
-/*
-Generic camera class by Nghia Ho
-*/
-
 class Camera
 {
 public:
