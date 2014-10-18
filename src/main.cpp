@@ -140,6 +140,47 @@ void Hall() {
     glVertex3f(-10.0, 0.0, -10.0);
     glEnd();
 
+    //PITCH
+    glBegin(GL_POLYGON);
+    glColor3f(1.0, 0.5, 0.0);
+    glVertex3f(10.0, 0.001, -4.0);
+    glVertex3f(10.0, 0.001, 4.0);
+    glVertex3f(0.0, 0.001, 4.0);
+    glVertex3f(0.0, 0.001, -4.0);
+    glEnd();
+
+    glPopMatrix();
+}
+
+void Net() {
+    glPushMatrix();
+
+    glColor3f(1.0, 0.0, 0.0);
+    glTranslatef(5, 1, 3);
+    glRotatef(90.0, 1.0, 0.0, 0.0);
+    glutSolidCylinder(0.05, 1, 10, 10);
+
+    glPopMatrix();
+
+    glPushMatrix();
+
+    glColor3f(1.0, 0.0, 0.0);
+    glTranslatef(5, 1, -3);
+    glRotatef(90.0, 1.0, 0.0, 0.0);
+    glutSolidCylinder(0.05, 1, 10, 10);
+
+    glPopMatrix();
+
+    glPushMatrix();
+
+    glBegin(GL_POLYGON);
+    glColor3f(1, 1, 1);
+    glVertex3f(5, 0.5, -3);
+    glVertex3f(5, 1, -3);
+    glVertex3f(5, 1, 3);
+    glVertex3f(5, 0.5, 3);
+    glEnd();
+
     glPopMatrix();
 }
 
@@ -154,6 +195,7 @@ void Display(void) {
 
     Grid();
     Hall();
+    Net();
 
     glutSwapBuffers(); //swap the buffers
 }
