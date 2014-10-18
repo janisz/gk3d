@@ -27,6 +27,8 @@ void Grid();
 
 void LoadObj(const char *filename);
 
+void loadFromMesh(std::vector<tinyobj::shape_t> shapes);
+
 Camera g_camera;
 bool g_key[256];
 bool g_shift_down = false;
@@ -40,8 +42,12 @@ bool g_mouse_right_down = false;
 const float g_translation_speed = 0.2;
 const float g_rotation_speed = M_PI / 180 * 0.1;
 
-std::vector<tinyobj::shape_t> shapes;
-std::vector<tinyobj::material_t> materials;
+typedef struct {
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> materials;
+} model_t;
+
+std::vector<model_t> models;
 
 int main(int argc, char **argv) {
     if (argc != 3) {
@@ -49,7 +55,9 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    LoadObj(argv[1]);
+    for (int i = 1; i < argc; i++) {
+        LoadObj(argv[i]);
+    }
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
@@ -77,8 +85,13 @@ int main(int argc, char **argv) {
 }
 
 void LoadObj(const char *filename) {
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> materials;
     std::string err = tinyobj::LoadObj(shapes, materials, filename);
-
+    model_t model;
+    model.materials = materials;
+    model.shapes = shapes;
+    models.push_back(model);
     if (!err.empty()) {
         std::cerr << err << std::endl;
         exit(1);
@@ -255,20 +268,34 @@ void Net() {
 void People() {
     glPushMatrix();
     glTranslatef(4, 0, -2);
+    glRotatef(120, 0, 1.0, 0);
     glScalef(0.01, 0.01, 0.01);
     glTranslatef(0, 45, 0);
     srand(0);
+    loadFromMesh(models[1].shapes);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(4.5, 0, -3);
+    glScalef(0.01, 0.01, 0.01);
+    glTranslatef(0, 45, 0);
+    srand(0);
+    loadFromMesh(models[0].shapes);
+    glPopMatrix();
+}
+
+void loadFromMesh(std::vector<tinyobj::shape_t> shapes) {
     for (size_t i = 0; i < shapes.size(); ++i) {
         glBegin(GL_TRIANGLES);
-        for (size_t f = 0; f < shapes[i].mesh.indices.size(); ++f) {
-            glColor3b(random()%255, random()%255, random()%255);
-            glVertex3f(shapes[i].mesh.positions[shapes[i].mesh.indices[f] * 3 + 0],
-                       shapes[i].mesh.positions[shapes[i].mesh.indices[f] * 3 + 1],
-                       shapes[i].mesh.positions[shapes[i].mesh.indices[f] * 3 + 2]);
+        std::vector<unsigned int> indices = shapes[i].mesh.indices;
+        for (size_t f = 0; f < indices.size(); ++f) {
+            glColor3b(random() % 255, random() % 255, random() % 255);
+            glVertex3f(shapes[i].mesh.positions[indices[f] * 3 + 0],
+                    shapes[i].mesh.positions[indices[f] * 3 + 1],
+                    shapes[i].mesh.positions[indices[f] * 3 + 2]);
         }
         glEnd();
     }
-    glPopMatrix();
 }
 
 void Display(void) {
