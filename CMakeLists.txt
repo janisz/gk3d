@@ -52,7 +52,7 @@ ExternalProject_Add(
 #TODO: Make it better
 set(tinyobjloader ${CMAKE_SOURCE_DIR}/libs/tinyobjloader)
 include_directories(${tinyobjloader}/include)
-target_link_libraries(${EXECUTABLE_NAME} ${tinyobjloader}/lib/)
+target_link_libraries(${EXECUTABLE_NAME} ${tinyobjloader}/lib/libtinyobjloader.a)
 add_dependencies(${EXECUTABLE_NAME} tinyobjloader)
 
 # Install target
