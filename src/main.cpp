@@ -284,6 +284,14 @@ void People() {
     glColor3f(0.5, 0.5, 0.5);
     loadFromMesh(models[0].shapes);
     glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(6, 0, -4);
+    glScalef(0.008, 0.008, 0.008);
+    glTranslatef(0, 13, 0);
+    glColor3f(0.5, 0.5, 0.5);
+    loadFromMesh(models[0].shapes);
+    glPopMatrix();
 }
 
 void loadFromMesh(std::vector<tinyobj::shape_t> shapes) {
