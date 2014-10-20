@@ -33,6 +33,7 @@ ExternalProject_Add(
     glm
     PREFIX ${CMAKE_SOURCE_DIR}/libs/glm
     GIT_REPOSITORY https://github.com/g-truc/glm.git
+    GIT_TAG 0.9.5.4
     INSTALL_COMMAND ""
     LOG_DOWNLOAD ON
     )
@@ -46,6 +47,7 @@ ExternalProject_Add(
     tinyobjloader
     PREFIX ${CMAKE_SOURCE_DIR}/libs/tinyobjloader
     GIT_REPOSITORY https://github.com/syoyo/tinyobjloader.git
+    GIT_TAG b35f4989ad90ef5f05e305c85923379882e4f9f0
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_SOURCE_DIR}/libs/tinyobjloader
     LOG_DOWNLOAD ON
     )
