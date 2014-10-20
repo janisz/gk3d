@@ -67,6 +67,9 @@ int main(int argc, char **argv) {
     glutCreateWindow("GK3D");
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
+
+    glShadeModel(GL_SMOOTH);
 
     glutIgnoreKeyRepeat(1);
 
@@ -268,6 +271,14 @@ void Net() {
 }
 
 void People() {
+    GLuint bench = glGenLists(1);
+    glNewList(bench, GL_COMPILE);
+    glScalef(0.008, 0.008, 0.008);
+    glTranslatef(0, 13, 0);
+    glColor3f(0.5, 0.5, 0.5);
+    loadFromMesh(models[0].shapes);
+    glEndList();
+
     glPushMatrix();
     glTranslatef(4, 0, -2);
     glRotatef(120, 0, 1.0, 0);
@@ -279,19 +290,15 @@ void People() {
 
     glPushMatrix();
     glTranslatef(3, 0, -4);
-    glScalef(0.008, 0.008, 0.008);
-    glTranslatef(0, 13, 0);
-    glColor3f(0.5, 0.5, 0.5);
-    loadFromMesh(models[0].shapes);
+    glCallList(bench);
     glPopMatrix();
 
     glPushMatrix();
     glTranslatef(6, 0, -4);
-    glScalef(0.008, 0.008, 0.008);
-    glTranslatef(0, 13, 0);
-    glColor3f(0.5, 0.5, 0.5);
-    loadFromMesh(models[0].shapes);
+    glCallList(bench);
     glPopMatrix();
+
+    glDeleteLists(bench, 1);
 }
 
 void loadFromMesh(std::vector<tinyobj::shape_t> shapes) {
@@ -307,6 +314,17 @@ void loadFromMesh(std::vector<tinyobj::shape_t> shapes) {
     }
 }
 
+void Light() {
+    GLfloat ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+    GLfloat diffuseLight[] = { 0.8f, 0.8f, 0.8, 1.0f };
+    GLfloat specularLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+    GLfloat position[] = { -1.5f, 1.0f, -4.0f, 1.0f };
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+    glLightfv(GL_LIGHT0, GL_POSITION, position);
+}
+
 void Display(void) {
     glClearColor(0.0, 0.0, 0.0, 10.0); //clear the screen to black
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //clear the color buffer and the depth buffer
@@ -320,6 +338,7 @@ void Display(void) {
     Hall();
     Net();
     People();
+    Light();
 
     glutSwapBuffers(); //swap the buffers
 }
