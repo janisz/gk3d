@@ -150,6 +150,7 @@ void Hall() {
     glVertex3f(20.0, 15.0, -10.0);
     glVertex3f(-10.0, 15.0, -10.0);
     glVertex3f(-10.0, 0.0, -10.0);
+    glNormal3f(0, 0, 1);
 
     glEnd();
 
@@ -160,6 +161,7 @@ void Hall() {
     glVertex3f(20.0, 15.0, 10.0);
     glVertex3f(-10.0, 15.0, 10.0);
     glVertex3f(-10.0, 0.0, 10.0);
+    glNormal3f(0, 0, -1);
     glEnd();
 
     //RIGHT
@@ -169,6 +171,7 @@ void Hall() {
     glVertex3f(20.0, 15.0, -10.0);
     glVertex3f(20.0, 15.0, 10.0);
     glVertex3f(20.0, 0.0, 10.0);
+    glNormal3f(-1, 0, 0);
     glEnd();
 
     //LEFT
@@ -178,6 +181,7 @@ void Hall() {
     glVertex3f(-10.0, 15.0, 10.0);
     glVertex3f(-10.0, 15.0, -10.0);
     glVertex3f(-10.0, 0.0, -10.0);
+    glNormal3f(1, 0, 0);
     glEnd();
 
     //TOP
@@ -187,6 +191,7 @@ void Hall() {
     glVertex3f(20.0, 15.0, -10.0);
     glVertex3f(-10.0, 15.0, -10.0);
     glVertex3f(-10.0, 15.0, 10.0);
+    glNormal3f(0, -1, 0);
     glEnd();
 
     //BOTTOM
@@ -196,6 +201,7 @@ void Hall() {
     glVertex3f(20.0, 0.0, 10.0);
     glVertex3f(-10.0, 0.0, 10.0);
     glVertex3f(-10.0, 0.0, -10.0);
+    glNormal3f(0, 1, 0);
     glEnd();
 
     //PITCH
@@ -205,6 +211,7 @@ void Hall() {
     glVertex3f(10.0, 0.001, 4.0);
     glVertex3f(0.0, 0.001, 4.0);
     glVertex3f(0.0, 0.001, -4.0);
+    glNormal3f(0, 1, 0);
     glEnd();
 
     glPopMatrix();
@@ -281,6 +288,9 @@ void loadFromMesh(std::vector<tinyobj::shape_t> shapes) {
             glVertex3f(shapes[i].mesh.positions[indices[f] * 3 + 0],
                     shapes[i].mesh.positions[indices[f] * 3 + 1],
                     shapes[i].mesh.positions[indices[f] * 3 + 2]);
+            glNormal3f(shapes[i].mesh.normals[indices[f] * 3 + 0],
+                    shapes[i].mesh.normals[indices[f] * 3 + 1],
+                    shapes[i].mesh.normals[indices[f] * 3 + 2]);
         }
         glEnd();
     }
