@@ -5,6 +5,7 @@
 #include <cstdio>
 
 #define GLM_COMPILER 0
+
 #include <glm.hpp>
 
 #include "Camera.h"
@@ -52,19 +53,37 @@ typedef struct {
 std::vector<model_t> models;
 
 void Light() {
-    GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat mat_shininess[] = { 50.0 };
-    GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
-    glClearColor (0.0, 0.0, 0.0, 0.0);
-    glShadeModel (GL_SMOOTH);
+    const GLfloat mat_ambient[4] = {0.247250, 0.224500, 0.064500, 1.000000};
+    const GLfloat mat_diffuse[4] = {0.346150, 0.314300, 0.090300, 1.000000};
+    const GLfloat mat_specular[4] = {0.797357, 0.723991, 0.208006, 1.000000};
+    const GLfloat mat_shininess = 83.2;
 
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glShadeModel(GL_SMOOTH);
+
+    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
     glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+    glMaterialf(GL_FRONT, GL_SHININESS, mat_shininess);
+
+    GLfloat specular[] = {1.0, 1.0, 1.0, 1.0};
+    glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+    GLfloat ambient[] = {1.0f, 1.0f, 0.0f};
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+    GLfloat light_position[] = {0, 15.0, 0, 1.0};
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 15);
+    GLfloat light_direction[] = {0, -1, 0};
+    glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light_direction);
+
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_AMBIENT);
 
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);   // Hidden surface removal
+    glFrontFace(GL_CCW);       // Counterclockwise polygons face out
+    glEnable(GL_CULL_FACE);    // Do not try to display the back sides
 }
 
 int main(int argc, char **argv) {
@@ -147,11 +166,14 @@ void Hall() {
     //FRONT
     glBegin(GL_POLYGON);
     glColor3f(0.5, 0.5, 0.5);
-    glVertex3f(20.0, 0.0, -10.0);
-    glVertex3f(20.0, 15.0, -10.0);
-    glVertex3f(-10.0, 15.0, -10.0);
-    glVertex3f(-10.0, 0.0, -10.0);
     glNormal3f(0, 0, 1);
+    glVertex3f(20.0, 0.0, -10.0);
+    glNormal3f(0, 0, 1);
+    glVertex3f(20.0, 15.0, -10.0);
+    glNormal3f(0, 0, 1);
+    glVertex3f(-10.0, 15.0, -10.0);
+    glNormal3f(0, 0, 1);
+    glVertex3f(-10.0, 0.0, -10.0);
 
     glEnd();
 
@@ -160,8 +182,11 @@ void Hall() {
     glColor3f(0.5, 0.5, 0.5);
     glNormal3f(0, 0, -1);
     glVertex3f(-10.0, 0.0, 10.0);
+    glNormal3f(0, 0, -1);
     glVertex3f(-10.0, 15.0, 10.0);
+    glNormal3f(0, 0, -1);
     glVertex3f(20.0, 15.0, 10.0);
+    glNormal3f(0, 0, -1);
     glVertex3f(20.0, 0.0, 10.0);
     glEnd();
 
@@ -170,8 +195,11 @@ void Hall() {
     glColor3f(0.75, 0.75, 0.75);
     glNormal3f(-1, 0, 0);
     glVertex3f(20.0, 15.0, -10.0);
+    glNormal3f(-1, 0, 0);
     glVertex3f(20.0, 0.0, -10.0);
+    glNormal3f(-1, 0, 0);
     glVertex3f(20.0, 0.0, 10.0);
+    glNormal3f(-1, 0, 0);
     glVertex3f(20.0, 15.0, 10.0);
     glEnd();
 
@@ -180,8 +208,11 @@ void Hall() {
     glColor3f(0.75, 0.75, 0.75);
     glNormal3f(1, 0, 0);
     glVertex3f(-10.0, 0.0, 10.0);
+    glNormal3f(1, 0, 0);
     glVertex3f(-10.0, 0.0, -10.0);
+    glNormal3f(1, 0, 0);
     glVertex3f(-10.0, 15.0, -10.0);
+    glNormal3f(1, 0, 0);
     glVertex3f(-10.0, 15.0, 10.0);
     glEnd();
 
@@ -190,8 +221,11 @@ void Hall() {
     glColor3f(0.0, 0.0, 1.0);
     glNormal3f(0, -1, 0);
     glVertex3f(20.0, 15.0, -10.0);
+    glNormal3f(0, -1, 0);
     glVertex3f(20.0, 15.0, 10.0);
+    glNormal3f(0, -1, 0);
     glVertex3f(-10.0, 15.0, 10.0);
+    glNormal3f(0, -1, 0);
     glVertex3f(-10.0, 15.0, -10.0);
     glEnd();
 
@@ -200,8 +234,11 @@ void Hall() {
     glColor3f(0.0, 1.0, 0.0);
     glNormal3f(0, 1, 0);
     glVertex3f(-10.0, 0.0, 10.0);
+    glNormal3f(0, 1, 0);
     glVertex3f(20.0, 0.0, 10.0);
+    glNormal3f(0, 1, 0);
     glVertex3f(20.0, 0.0, -10.0);
+    glNormal3f(0, 1, 0);
     glVertex3f(-10.0, 0.0, -10.0);
     glEnd();
 
@@ -210,8 +247,11 @@ void Hall() {
     glColor3f(1.0, 0.5, 0.0);
     glNormal3f(0, 1, 0);
     glVertex3f(0.0, 0.0001, -4.0);
+    glNormal3f(0, 1, 0);
     glVertex3f(0.0, 0.0001, 4.0);
+    glNormal3f(0, 1, 0);
     glVertex3f(10.0, 0.0001, 4.0);
+    glNormal3f(0, 1, 0);
     glVertex3f(10.0, 0.0001, -4.0);
     glEnd();
 
@@ -293,12 +333,12 @@ void loadFromMesh(std::vector<tinyobj::shape_t> shapes) {
         glBegin(GL_TRIANGLES);
         std::vector<unsigned int> indices = shapes[i].mesh.indices;
         for (size_t f = 0; f < indices.size(); ++f) {
-            glVertex3f(shapes[i].mesh.positions[indices[f] * 3 + 0],
-                    shapes[i].mesh.positions[indices[f] * 3 + 1],
-                    shapes[i].mesh.positions[indices[f] * 3 + 2]);
             glNormal3f(shapes[i].mesh.normals[indices[f] * 3 + 0],
                     shapes[i].mesh.normals[indices[f] * 3 + 1],
                     shapes[i].mesh.normals[indices[f] * 3 + 2]);
+            glVertex3f(shapes[i].mesh.positions[indices[f] * 3 + 0],
+                    shapes[i].mesh.positions[indices[f] * 3 + 1],
+                    shapes[i].mesh.positions[indices[f] * 3 + 2]);
         }
         glEnd();
     }
