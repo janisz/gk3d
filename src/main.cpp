@@ -86,6 +86,7 @@ int main(int argc, char **argv) {
     glEnable(GL_LIGHTING);
 
     glShadeModel(GL_SMOOTH);
+    glEnable(GL_CULL_FACE);
 
     Light();
 
@@ -157,61 +158,61 @@ void Hall() {
     //BACK
     glBegin(GL_POLYGON);
     glColor3f(0.5, 0.5, 0.5);
-    glVertex3f(20.0, 0.0, 10.0);
-    glVertex3f(20.0, 15.0, 10.0);
-    glVertex3f(-10.0, 15.0, 10.0);
-    glVertex3f(-10.0, 0.0, 10.0);
     glNormal3f(0, 0, -1);
+    glVertex3f(-10.0, 0.0, 10.0);
+    glVertex3f(-10.0, 15.0, 10.0);
+    glVertex3f(20.0, 15.0, 10.0);
+    glVertex3f(20.0, 0.0, 10.0);
     glEnd();
 
     //RIGHT
     glBegin(GL_POLYGON);
     glColor3f(0.75, 0.75, 0.75);
-    glVertex3f(20.0, 0.0, -10.0);
-    glVertex3f(20.0, 15.0, -10.0);
-    glVertex3f(20.0, 15.0, 10.0);
-    glVertex3f(20.0, 0.0, 10.0);
     glNormal3f(-1, 0, 0);
+    glVertex3f(20.0, 15.0, -10.0);
+    glVertex3f(20.0, 0.0, -10.0);
+    glVertex3f(20.0, 0.0, 10.0);
+    glVertex3f(20.0, 15.0, 10.0);
     glEnd();
 
     //LEFT
     glBegin(GL_POLYGON);
     glColor3f(0.75, 0.75, 0.75);
-    glVertex3f(-10.0, 0.0, 10.0);
-    glVertex3f(-10.0, 15.0, 10.0);
-    glVertex3f(-10.0, 15.0, -10.0);
-    glVertex3f(-10.0, 0.0, -10.0);
     glNormal3f(1, 0, 0);
+    glVertex3f(-10.0, 0.0, 10.0);
+    glVertex3f(-10.0, 0.0, -10.0);
+    glVertex3f(-10.0, 15.0, -10.0);
+    glVertex3f(-10.0, 15.0, 10.0);
     glEnd();
 
     //TOP
     glBegin(GL_POLYGON);
     glColor3f(0.0, 0.0, 1.0);
-    glVertex3f(20.0, 15.0, 10.0);
-    glVertex3f(20.0, 15.0, -10.0);
-    glVertex3f(-10.0, 15.0, -10.0);
-    glVertex3f(-10.0, 15.0, 10.0);
     glNormal3f(0, -1, 0);
+    glVertex3f(20.0, 15.0, -10.0);
+    glVertex3f(20.0, 15.0, 10.0);
+    glVertex3f(-10.0, 15.0, 10.0);
+    glVertex3f(-10.0, 15.0, -10.0);
     glEnd();
 
     //BOTTOM
     glBegin(GL_POLYGON);
     glColor3f(0.0, 1.0, 0.0);
-    glVertex3f(20.0, 0.0, -10.0);
-    glVertex3f(20.0, 0.0, 10.0);
-    glVertex3f(-10.0, 0.0, 10.0);
-    glVertex3f(-10.0, 0.0, -10.0);
     glNormal3f(0, 1, 0);
+    glVertex3f(-10.0, 0.0, 10.0);
+    glVertex3f(20.0, 0.0, 10.0);
+    glVertex3f(20.0, 0.0, -10.0);
+    glVertex3f(-10.0, 0.0, -10.0);
     glEnd();
 
     //PITCH
     glBegin(GL_POLYGON);
     glColor3f(1.0, 0.5, 0.0);
-    glVertex3f(10.0, 0.001, -4.0);
-    glVertex3f(10.0, 0.001, 4.0);
-    glVertex3f(0.0, 0.001, 4.0);
-    glVertex3f(0.0, 0.001, -4.0);
     glNormal3f(0, 1, 0);
+    glVertex3f(0.0, 0.0001, -4.0);
+    glVertex3f(0.0, 0.0001, 4.0);
+    glVertex3f(10.0, 0.0001, 4.0);
+    glVertex3f(10.0, 0.0001, -4.0);
     glEnd();
 
     glPopMatrix();
@@ -244,6 +245,13 @@ void Net() {
     glVertex3f(5, 1, -3);
     glVertex3f(5, 1, 3);
     glVertex3f(5, 0.5, 3);
+    glEnd();
+    glBegin(GL_POLYGON);
+    glColor3f(1, 1, 1);
+    glVertex3f(5, 0.5, 3);
+    glVertex3f(5, 1, 3);
+    glVertex3f(5, 1, -3);
+    glVertex3f(5, 0.5, -3);
     glEnd();
 
     glPopMatrix();
