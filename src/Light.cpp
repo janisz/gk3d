@@ -1,8 +1,8 @@
-#include <math.h>
 #include <GL/glut.h>
 #include "Light.h"
 
 float spotLightBlueValue = 0.0;
+
 void SpotLight() {
     GLfloat specular[] = {1.0, 0, 0, 1.0};
 //    glLightfv(GL_LIGHT2, GL_SPECULAR, specular);

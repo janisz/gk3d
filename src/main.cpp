@@ -1,14 +1,11 @@
 #include <GL/freeglut.h>
-#include <iostream>
 #include <cmath>
-#include <tiny_obj_loader.h>
 #include <cstdio>
-
-#define GLM_COMPILER 0
-#include <glm.hpp>
+#include <iostream>
 
 #include "Camera.h"
 #include "Light.h"
+#include "Scene.h"
 
 void Display();
 
@@ -26,12 +23,6 @@ void Timer(int value);
 
 void Idle();
 
-void Grid();
-
-void LoadObj(const char *filename);
-
-void loadFromMesh(std::vector<tinyobj::shape_t> shapes);
-
 Camera g_camera;
 bool g_key[256];
 bool g_shift_down = false;
@@ -44,13 +35,6 @@ bool g_mouse_right_down = false;
 // Movement settings
 const float g_translation_speed = 0.2;
 const float g_rotation_speed = M_PI / 180 * 0.1;
-
-typedef struct {
-    std::vector<tinyobj::shape_t> shapes;
-    std::vector<tinyobj::material_t> materials;
-} model_t;
-
-std::vector<model_t> models;
 
 int main(int argc, char **argv) {
     if (argc != 3) {
@@ -74,8 +58,6 @@ int main(int argc, char **argv) {
     glShadeModel(GL_SMOOTH);
     glEnable(GL_CULL_FACE);
 
-    Light();
-
     glutIgnoreKeyRepeat(1);
 
     glutDisplayFunc(Display);
@@ -92,202 +74,6 @@ int main(int argc, char **argv) {
     glutMainLoop();
 
     return 0;
-}
-
-void LoadObj(const char *filename) {
-    std::vector<tinyobj::shape_t> shapes;
-    std::vector<tinyobj::material_t> materials;
-    std::string err = tinyobj::LoadObj(shapes, materials, filename);
-    if (!err.empty()) {
-        std::cerr << err << std::endl;
-        exit(1);
-    }
-    model_t model;
-    model.materials = materials;
-    model.shapes = shapes;
-    models.push_back(model);
-}
-
-void Grid() {
-    glPushMatrix();
-    glColor3f(1, 1, 1);
-
-    for (int i = -50; i < 50; i++) {
-        glBegin(GL_LINES);
-        glVertex3f(i, 0, -50);
-        glVertex3f(i, 0, 50);
-        glEnd();
-        glBegin(GL_LINES);
-        glVertex3f(-50, 0, i);
-        glVertex3f(50, 0, i);
-        glEnd();
-    }
-
-    glPopMatrix();
-}
-
-void Hall() {
-    glPushMatrix();
-    glColor3f(1, 1, 1);
-
-    //FRONT
-    glBegin(GL_POLYGON);
-    glColor3f(0.5, 0.5, 0.5);
-    glNormal3f(0, 0, 1);
-    glVertex3f(20.0, 0.0, -10.0);
-    glVertex3f(20.0, 15.0, -10.0);
-    glVertex3f(-10.0, 15.0, -10.0);
-    glVertex3f(-10.0, 0.0, -10.0);
-
-    glEnd();
-
-    //BACK
-    glBegin(GL_POLYGON);
-    glColor3f(0.5, 0.5, 0.5);
-    glNormal3f(0, 0, -1);
-    glVertex3f(-10.0, 0.0, 10.0);
-    glVertex3f(-10.0, 15.0, 10.0);
-    glVertex3f(20.0, 15.0, 10.0);
-    glVertex3f(20.0, 0.0, 10.0);
-    glEnd();
-
-    //RIGHT
-    glBegin(GL_POLYGON);
-    glColor3f(0.75, 0.75, 0.75);
-    glNormal3f(-1, 0, 0);
-    glVertex3f(20.0, 15.0, -10.0);
-    glVertex3f(20.0, 0.0, -10.0);
-    glVertex3f(20.0, 0.0, 10.0);
-    glVertex3f(20.0, 15.0, 10.0);
-    glEnd();
-
-    //LEFT
-    glBegin(GL_POLYGON);
-    glColor3f(0.75, 0.75, 0.75);
-    glNormal3f(1, 0, 0);
-    glVertex3f(-10.0, 0.0, 10.0);
-    glVertex3f(-10.0, 0.0, -10.0);
-    glVertex3f(-10.0, 15.0, -10.0);
-    glVertex3f(-10.0, 15.0, 10.0);
-    glEnd();
-
-    //TOP
-    glBegin(GL_POLYGON);
-    glColor3f(0.0, 0.0, 1.0);
-    glNormal3f(0, -1, 0);
-    glVertex3f(20.0, 15.0, -10.0);
-    glVertex3f(20.0, 15.0, 10.0);
-    glVertex3f(-10.0, 15.0, 10.0);
-    glVertex3f(-10.0, 15.0, -10.0);
-    glEnd();
-
-    //BOTTOM
-    glBegin(GL_POLYGON);
-    glColor3f(0.0, 1.0, 0.0);
-    glNormal3f(0, 1, 0);
-    glVertex3f(-10.0, 0.0, 10.0);
-    glVertex3f(20.0, 0.0, 10.0);
-    glVertex3f(20.0, 0.0, -10.0);
-    glVertex3f(-10.0, 0.0, -10.0);
-    glEnd();
-
-    //PITCH
-    glBegin(GL_POLYGON);
-    glColor3f(1.0, 0.5, 0.0);
-    glNormal3f(0, 1, 0);
-    glVertex3f(0.0, 0.0001, -4.0);
-    glVertex3f(0.0, 0.0001, 4.0);
-    glVertex3f(10.0, 0.0001, 4.0);
-    glVertex3f(10.0, 0.0001, -4.0);
-    glEnd();
-
-    glPopMatrix();
-}
-
-void Net() {
-    glPushMatrix();
-
-    glColor3f(1.0, 0.0, 0.0);
-    glTranslatef(5, 1, 3);
-    glRotatef(90.0, 1.0, 0.0, 0.0);
-    glutSolidCylinder(0.05, 1, 10, 10);
-
-    glPopMatrix();
-
-    glPushMatrix();
-
-    glColor3f(1.0, 0.0, 0.0);
-    glTranslatef(5, 1, -3);
-    glRotatef(90.0, 1.0, 0.0, 0.0);
-    glutSolidCylinder(0.05, 1, 10, 10);
-
-    glPopMatrix();
-
-    glPushMatrix();
-
-    glBegin(GL_POLYGON);
-    glColor3f(1, 1, 1);
-    glVertex3f(5, 0.5, -3);
-    glVertex3f(5, 1, -3);
-    glVertex3f(5, 1, 3);
-    glVertex3f(5, 0.5, 3);
-    glEnd();
-    glBegin(GL_POLYGON);
-    glColor3f(1, 1, 1);
-    glVertex3f(5, 0.5, 3);
-    glVertex3f(5, 1, 3);
-    glVertex3f(5, 1, -3);
-    glVertex3f(5, 0.5, -3);
-    glEnd();
-
-    glPopMatrix();
-}
-
-void People() {
-    GLuint bench = glGenLists(1);
-    glNewList(bench, GL_COMPILE);
-    glScalef(0.008, 0.008, 0.008);
-    glTranslatef(0, 13, 0);
-    glColor3f(0.5, 0.5, 0.5);
-    loadFromMesh(models[0].shapes);
-    glEndList();
-
-    glPushMatrix();
-    glTranslatef(4, 0, -2);
-    glRotatef(120, 0, 1.0, 0);
-    glScalef(0.01, 0.01, 0.01);
-    glTranslatef(0, 45, 0);
-    glColor3f(1, 0.9, 0.8);
-    loadFromMesh(models[1].shapes);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(3, 0, -4);
-    glCallList(bench);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(6, 0, -4);
-    glCallList(bench);
-    glPopMatrix();
-
-    glDeleteLists(bench, 1);
-}
-
-void loadFromMesh(std::vector<tinyobj::shape_t> shapes) {
-    for (size_t i = 0; i < shapes.size(); ++i) {
-        glBegin(GL_TRIANGLES);
-        std::vector<unsigned int> indices = shapes[i].mesh.indices;
-        for (size_t f = 0; f < indices.size(); ++f) {
-            glNormal3f(shapes[i].mesh.normals[indices[f] * 3 + 0],
-                    shapes[i].mesh.normals[indices[f] * 3 + 1],
-                    shapes[i].mesh.normals[indices[f] * 3 + 2]);
-            glVertex3f(shapes[i].mesh.positions[indices[f] * 3 + 0],
-                    shapes[i].mesh.positions[indices[f] * 3 + 1],
-                    shapes[i].mesh.positions[indices[f] * 3 + 2]);
-        }
-        glEnd();
-    }
 }
 
 void Display(void) {
