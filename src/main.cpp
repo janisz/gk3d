@@ -32,6 +32,10 @@ void LoadObj(const char *filename);
 
 void loadFromMesh(std::vector<tinyobj::shape_t> shapes);
 
+void Light0();
+void Light1();
+void SpotLight();
+
 Camera g_camera;
 bool g_key[256];
 bool g_shift_down = false;
@@ -53,10 +57,10 @@ typedef struct {
 std::vector<model_t> models;
 
 void Light() {
-    const GLfloat mat_ambient[4] = {0.247250, 0.224500, 0.064500, 1.000000};
-    const GLfloat mat_diffuse[4] = {0.346150, 0.314300, 0.090300, 1.000000};
-    const GLfloat mat_specular[4] = {0.797357, 0.723991, 0.208006, 1.000000};
-    const GLfloat mat_shininess = 83.2;
+    GLfloat mat_ambient[4] = {0.247250, 0.224500, 0.064500, 1.000000};
+    GLfloat mat_diffuse[4] = {0.346150, 0.314300, 0.090300, 1.000000};
+    GLfloat mat_specular[4] = {0.797357, 0.723991, 0.208006, 1.000000};
+    GLfloat mat_shininess = 83.2;
 
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glShadeModel(GL_SMOOTH);
@@ -66,24 +70,68 @@ void Light() {
     glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
     glMaterialf(GL_FRONT, GL_SHININESS, mat_shininess);
 
-    GLfloat specular[] = {1.0, 1.0, 1.0, 1.0};
-    glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
-    GLfloat ambient[] = {1.0f, 1.0f, 0.0f};
-    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-    GLfloat light_position[] = {0, 15.0, 0, 1.0};
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-    glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 15);
-    GLfloat light_direction[] = {0, -1, 0};
-    glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light_direction);
+    Light0();
+    Light1();
+    SpotLight();
 
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT, GL_AMBIENT);
 
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHT1);
+    glEnable(GL_LIGHT2);
     glEnable(GL_DEPTH_TEST);   // Hidden surface removal
     glFrontFace(GL_CCW);       // Counterclockwise polygons face out
     glEnable(GL_CULL_FACE);    // Do not try to display the back sides
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+}
+
+float spotLightBlueValue = 0.0;
+void SpotLight() {
+    GLfloat specular[] = {1.0, 0, 0, 1.0};
+//    glLightfv(GL_LIGHT2, GL_SPECULAR, specular);
+    spotLightBlueValue += 0.01;
+    spotLightBlueValue = spotLightBlueValue > 1 ? 0 : spotLightBlueValue;
+    GLfloat ambient[] = {0, 0, spotLightBlueValue, 1.0f};
+    glLightfv(GL_LIGHT2, GL_AMBIENT, ambient);
+    GLfloat diffuse[] = {0.5, 0.5, 0.5, 1.0};
+//    glLightfv(GL_LIGHT2, GL_DIFFUSE, diffuse);
+    GLfloat light_position[] = {3, 1, -4, 1.0};
+    glLightfv(GL_LIGHT2, GL_POSITION, light_position);
+    glLightf(GL_LIGHT2, GL_CONSTANT_ATTENUATION, 1.5);
+    glLightf(GL_LIGHT2, GL_LINEAR_ATTENUATION, .5);
+    glLightf(GL_LIGHT2, GL_QUADRATIC_ATTENUATION, .2);
+}
+
+void Light0() {
+    GLfloat specular[] = {0.5, 0.5, 0.5, 1.0};
+    glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+    GLfloat ambient[] = {0.2f, 0.2f, 0.2f, 1.0f};
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+    GLfloat diffuse[] = {0.5, 0.5, 0.5, 1.0};
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+    GLfloat light_position[] = {19, 14.0, -10, 1.0};
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 15);
+    glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 5);
+    GLfloat light_direction[] = {-19, -14, 10};
+    glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light_direction);
+}
+
+void Light1() {
+    GLfloat specular[] = {0.5, 0.5, 0.5, 1.0};
+    glLightfv(GL_LIGHT1, GL_SPECULAR, specular);
+    GLfloat ambient[] = {0.2f, 0.2f, 0.2f, 1.0f};
+    glLightfv(GL_LIGHT1, GL_AMBIENT, ambient);
+    GLfloat diffuse[] = {0.5, 0.5, 0.2, 1.0};
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse);
+    GLfloat light_position[] = {-10, 14.0, 10, 1.0};
+    glLightfv(GL_LIGHT1, GL_POSITION, light_position);
+    glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 15);
+    glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 5);
+    GLfloat light_direction[] = {10, -14, -10};
+    glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, light_direction);
 }
 
 int main(int argc, char **argv) {
@@ -103,6 +151,7 @@ int main(int argc, char **argv) {
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
+    glEnable(GL_NORMALIZE);
 
     glShadeModel(GL_SMOOTH);
     glEnable(GL_CULL_FACE);
@@ -168,11 +217,8 @@ void Hall() {
     glColor3f(0.5, 0.5, 0.5);
     glNormal3f(0, 0, 1);
     glVertex3f(20.0, 0.0, -10.0);
-    glNormal3f(0, 0, 1);
     glVertex3f(20.0, 15.0, -10.0);
-    glNormal3f(0, 0, 1);
     glVertex3f(-10.0, 15.0, -10.0);
-    glNormal3f(0, 0, 1);
     glVertex3f(-10.0, 0.0, -10.0);
 
     glEnd();
@@ -182,11 +228,8 @@ void Hall() {
     glColor3f(0.5, 0.5, 0.5);
     glNormal3f(0, 0, -1);
     glVertex3f(-10.0, 0.0, 10.0);
-    glNormal3f(0, 0, -1);
     glVertex3f(-10.0, 15.0, 10.0);
-    glNormal3f(0, 0, -1);
     glVertex3f(20.0, 15.0, 10.0);
-    glNormal3f(0, 0, -1);
     glVertex3f(20.0, 0.0, 10.0);
     glEnd();
 
@@ -195,11 +238,8 @@ void Hall() {
     glColor3f(0.75, 0.75, 0.75);
     glNormal3f(-1, 0, 0);
     glVertex3f(20.0, 15.0, -10.0);
-    glNormal3f(-1, 0, 0);
     glVertex3f(20.0, 0.0, -10.0);
-    glNormal3f(-1, 0, 0);
     glVertex3f(20.0, 0.0, 10.0);
-    glNormal3f(-1, 0, 0);
     glVertex3f(20.0, 15.0, 10.0);
     glEnd();
 
@@ -208,11 +248,8 @@ void Hall() {
     glColor3f(0.75, 0.75, 0.75);
     glNormal3f(1, 0, 0);
     glVertex3f(-10.0, 0.0, 10.0);
-    glNormal3f(1, 0, 0);
     glVertex3f(-10.0, 0.0, -10.0);
-    glNormal3f(1, 0, 0);
     glVertex3f(-10.0, 15.0, -10.0);
-    glNormal3f(1, 0, 0);
     glVertex3f(-10.0, 15.0, 10.0);
     glEnd();
 
@@ -221,11 +258,8 @@ void Hall() {
     glColor3f(0.0, 0.0, 1.0);
     glNormal3f(0, -1, 0);
     glVertex3f(20.0, 15.0, -10.0);
-    glNormal3f(0, -1, 0);
     glVertex3f(20.0, 15.0, 10.0);
-    glNormal3f(0, -1, 0);
     glVertex3f(-10.0, 15.0, 10.0);
-    glNormal3f(0, -1, 0);
     glVertex3f(-10.0, 15.0, -10.0);
     glEnd();
 
@@ -234,11 +268,8 @@ void Hall() {
     glColor3f(0.0, 1.0, 0.0);
     glNormal3f(0, 1, 0);
     glVertex3f(-10.0, 0.0, 10.0);
-    glNormal3f(0, 1, 0);
     glVertex3f(20.0, 0.0, 10.0);
-    glNormal3f(0, 1, 0);
     glVertex3f(20.0, 0.0, -10.0);
-    glNormal3f(0, 1, 0);
     glVertex3f(-10.0, 0.0, -10.0);
     glEnd();
 
@@ -247,11 +278,8 @@ void Hall() {
     glColor3f(1.0, 0.5, 0.0);
     glNormal3f(0, 1, 0);
     glVertex3f(0.0, 0.0001, -4.0);
-    glNormal3f(0, 1, 0);
     glVertex3f(0.0, 0.0001, 4.0);
-    glNormal3f(0, 1, 0);
     glVertex3f(10.0, 0.0001, 4.0);
-    glNormal3f(0, 1, 0);
     glVertex3f(10.0, 0.0001, -4.0);
     glEnd();
 
@@ -357,6 +385,7 @@ void Display(void) {
     Hall();
     Net();
     People();
+    Light();
 
     glutSwapBuffers(); //swap the buffers
 }
