@@ -19,11 +19,13 @@ GK3D [![Build Status](https://travis-ci.org/janisz/gk3d.svg?branch=master)](http
 | Key                | Action             |
 |--------------------|--------            |
 |`SPACEBAR`          | toggle FPS control |
-|`W`                 | forward            |
-|`A`                 | left               |
-|`S`                 | backward           |
-|`D`                 | right              |
+|`W`                 | forward or increase fog min distnace |
+|`A`                 | left or decrease fog max distance    |
+|`S`                 | backward or decrease fog min distance|
+|`D`                 | right or increase for max distnace   |
 | mouse              | look around        |
 | left mouse button  | up                 |
 | right mouse button | down               |
+|`+`                 | increase density   |
+|`-`                 | decrease density   |
 |`ESC`               |  quit              |
