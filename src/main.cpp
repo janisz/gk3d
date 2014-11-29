@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "Light.h"
 #include "Scene.h"
+#include "Fog.h"
 
 void Display();
 
@@ -26,9 +27,13 @@ void Idle();
 Camera g_camera;
 bool g_key[256];
 bool g_shift_down = false;
+
 bool g_fps_mode = false;
+bool g_fog_mode = false;
+
 int g_viewport_width = 0;
 int g_viewport_height = 0;
+
 bool g_mouse_left_down = false;
 bool g_mouse_right_down = false;
 
@@ -90,6 +95,8 @@ void Display(void) {
     Net();
     People();
     Light();
+    Fog();
+
 
     glutSwapBuffers(); //swap the buffers
 }
@@ -115,12 +122,18 @@ void Keyboard(unsigned char key, int x, int y) {
         g_fps_mode = !g_fps_mode;
 
         if (g_fps_mode) {
+            g_fog_mode = false;
             glutSetCursor(GLUT_CURSOR_NONE);
             glutWarpPointer(g_viewport_width / 2, g_viewport_height / 2);
         }
         else {
             glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
         }
+    }
+    if (toupper(key) == 'F') {
+        g_fog_mode = true;
+        g_fps_mode = false;
+        glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
     }
 
     g_shift_down = glutGetModifiers() == GLUT_ACTIVE_SHIFT;
@@ -132,9 +145,8 @@ void KeyboardUp(unsigned char key, int x, int y) {
     g_key[key] = false;
 }
 
-void Timer(int value) {
-    if (g_fps_mode) {
-        if (g_key['w'] || g_key['W']) {
+void configureCameraGlobals() {
+    if (g_key['w'] || g_key['W']) {
             g_camera.Move(g_translation_speed);
         }
         else if (g_key['s'] || g_key['S']) {
@@ -152,6 +164,14 @@ void Timer(int value) {
         else if (g_mouse_right_down) {
             g_camera.Fly(g_translation_speed);
         }
+}
+
+void Timer(int value) {
+    if (g_fps_mode) {
+        configureCameraGlobals();
+    }
+    if (g_fog_mode) {
+        ConfigureFogGlobals();
     }
 
     glutTimerFunc(1, Timer, 0);
