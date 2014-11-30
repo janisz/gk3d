@@ -7,6 +7,7 @@
 #include "Light.h"
 #include "Scene.h"
 #include "Fog.h"
+#include "Texture.h"
 
 void Display();
 
@@ -41,15 +42,12 @@ bool g_mouse_right_down = false;
 const float g_translation_speed = 0.2;
 const float g_rotation_speed = M_PI / 180 * 0.1;
 
-int main(int argc, char **argv) {
-    if (argc != 3) {
-        std::cout << "Usage:  " << argv[0] << "input0.obj input1.obj" << std::endl;
-        exit(1);
-    }
+GLuint g_texture_wood;
+GLuint g_texture_check;
+GLuint g_texture_net;
 
-    for (int i = 1; i < argc; i++) {
-        LoadObj(argv[i]);
-    }
+
+int main(int argc, char **argv) {
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
@@ -59,6 +57,7 @@ int main(int argc, char **argv) {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
     glEnable(GL_NORMALIZE);
+    glEnable(GL_TEXTURE_2D);
 
     glShadeModel(GL_SMOOTH);
     glEnable(GL_CULL_FACE);
@@ -74,6 +73,13 @@ int main(int argc, char **argv) {
     glutKeyboardFunc(Keyboard);
     glutKeyboardUpFunc(KeyboardUp);
     glutIdleFunc(Idle);
+
+    LoadObj("./resources/models/bench.obj");
+    LoadObj("./resources/models/female.obj");
+
+    g_texture_check = LoadTexture("./resources/textures/check.png");
+    g_texture_wood = LoadTexture("./resources/textures/wood.png");
+    g_texture_net = LoadTexture("./resources/textures/net.png");
 
     glutTimerFunc(1, Timer, 0);
     glutMainLoop();

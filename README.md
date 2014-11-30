@@ -9,9 +9,7 @@ GK3D [![Build Status](https://travis-ci.org/janisz/gk3d.svg?branch=master)](http
   
 2. Generate makefile `cmake .`
 3. Make project `make`
-4. Run `./gk3d.out <path to *.obj fils> <path to *.obj fils>` e.g.:
-
-        ./gk3d.out "resources/models/bench.obj" "resources/models/female.obj"
+4. Run `./gk3d.out`
 
 
 ### Usage

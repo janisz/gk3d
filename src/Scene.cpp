@@ -7,6 +7,9 @@
 
 std::vector<model_t> models;
 
+extern GLuint g_texture_wood;
+extern GLuint g_texture_check;
+extern GLuint g_texture_net;
 
 void LoadObj(const char *filename) {
     std::vector<tinyobj::shape_t> shapes;
@@ -25,14 +28,20 @@ void LoadObj(const char *filename) {
 void loadFromMesh(std::vector<tinyobj::shape_t> shapes) {
     for (size_t i = 0; i < shapes.size(); ++i) {
         glBegin(GL_TRIANGLES);
-        std::vector<unsigned int> indices = shapes[i].mesh.indices;
+        tinyobj::mesh_t mesh = shapes[i].mesh;
+        std::vector<unsigned int> indices = mesh.indices;
         for (size_t f = 0; f < indices.size(); ++f) {
-            glNormal3f(shapes[i].mesh.normals[indices[f] * 3 + 0],
-                    shapes[i].mesh.normals[indices[f] * 3 + 1],
-                    shapes[i].mesh.normals[indices[f] * 3 + 2]);
-            glVertex3f(shapes[i].mesh.positions[indices[f] * 3 + 0],
-                    shapes[i].mesh.positions[indices[f] * 3 + 1],
-                    shapes[i].mesh.positions[indices[f] * 3 + 2]);
+            glNormal3f(mesh.normals[indices[f] * 3 + 0],
+                    mesh.normals[indices[f] * 3 + 1],
+                    mesh.normals[indices[f] * 3 + 2]);
+            glVertex3f(mesh.positions[indices[f] * 3 + 0],
+                    mesh.positions[indices[f] * 3 + 1],
+                    mesh.positions[indices[f] * 3 + 2]);
+            if (mesh.texcoords.size() > 0) {
+                glTexCoord3f(mesh.texcoords[indices[f] * 3 + 0],
+                        mesh.texcoords[indices[f] * 3 + 1],
+                        mesh.texcoords[indices[f] * 3 + 2]);
+            }
         }
         glEnd();
     }
@@ -122,14 +131,20 @@ void Hall() {
     glEnd();
 
     //PITCH
+    glBindTexture(GL_TEXTURE_2D, g_texture_wood);
     glBegin(GL_POLYGON);
     glColor3f(1.0, 0.5, 0.0);
     glNormal3f(0, 1, 0);
+    glTexCoord2f(0.0f, 0.0f);
     glVertex3f(0.0, 0.0001, -4.0);
+    glTexCoord2f(20.0f, 0.0f);
     glVertex3f(0.0, 0.0001, 4.0);
+    glTexCoord2f(20.0f, 20.0f);
     glVertex3f(10.0, 0.0001, 4.0);
+    glTexCoord2f(0.0f, 20.0f);
     glVertex3f(10.0, 0.0001, -4.0);
     glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     glPopMatrix();
 }
@@ -155,20 +170,30 @@ void Net() {
 
     glPushMatrix();
 
+    glBindTexture(GL_TEXTURE_2D, g_texture_net);
     glBegin(GL_POLYGON);
     glColor3f(1, 1, 1);
+    glTexCoord2f(0.0f, 0.0f);
     glVertex3f(5, 0.5, -3);
+    glTexCoord2f(0.0f, 1.0f);
     glVertex3f(5, 1, -3);
+    glTexCoord2f(1.0f, 1.0f);
     glVertex3f(5, 1, 3);
+    glTexCoord2f(1.0f, 0.0f);
     glVertex3f(5, 0.5, 3);
     glEnd();
     glBegin(GL_POLYGON);
     glColor3f(1, 1, 1);
+    glTexCoord2f(2.0f, 2.0f);
     glVertex3f(5, 0.5, 3);
+    glTexCoord2f(2.0f, 22.0f);
     glVertex3f(5, 1, 3);
+    glTexCoord2f(22.0f, 22.0f);
     glVertex3f(5, 1, -3);
+    glTexCoord2f(22.0f, 2.0f);
     glVertex3f(5, 0.5, -3);
     glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     glPopMatrix();
 }
@@ -179,7 +204,9 @@ void People() {
     glScalef(0.008, 0.008, 0.008);
     glTranslatef(0, 13, 0);
     glColor3f(0.5, 0.5, 0.5);
+    glBindTexture(GL_TEXTURE_2D, g_texture_check);
     loadFromMesh(models[0].shapes);
+    glBindTexture(GL_TEXTURE_2D, 0);
     glEndList();
 
     glPushMatrix();

@@ -57,6 +57,19 @@ include_directories(${tinyobjloader}/include)
 target_link_libraries(${EXECUTABLE_NAME} ${tinyobjloader}/lib/libtinyobjloader.a)
 add_dependencies(${EXECUTABLE_NAME} tinyobjloader)
 
+#Simple OpenGL Image Library
+ExternalProject_Add(
+    soil
+    PREFIX ${CMAKE_SOURCE_DIR}/libs/soil
+    GIT_REPOSITORY https://github.com/kbranigan/Simple-OpenGL-Image-Library.git
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_SOURCE_DIR}/libs/soil
+    LOG_DOWNLOAD ON
+    )
+set(tinyobjloader ${CMAKE_SOURCE_DIR}/libs/soil)
+include_directories(${tinyobjloader}/include)
+target_link_libraries(${EXECUTABLE_NAME} ${tinyobjloader}/lib/libSOIL.a)
+add_dependencies(${EXECUTABLE_NAME} soil)
+
 # Install target
 install(TARGETS ${EXECUTABLE_NAME} DESTINATION bin)
 
