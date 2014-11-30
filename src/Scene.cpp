@@ -170,6 +170,7 @@ void Net() {
 
     glPushMatrix();
 
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE);
     glBindTexture(GL_TEXTURE_2D, g_texture_net);
     glBegin(GL_POLYGON);
     glColor3f(1, 1, 1);
@@ -194,6 +195,7 @@ void Net() {
     glVertex3f(5, 0.5, -3);
     glEnd();
     glBindTexture(GL_TEXTURE_2D, 0);
+    glBlendFunc(GL_SRC_ALPHA, GL_ZERO);
 
     glPopMatrix();
 }

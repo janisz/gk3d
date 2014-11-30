@@ -58,6 +58,7 @@ int main(int argc, char **argv) {
     glEnable(GL_LIGHTING);
     glEnable(GL_NORMALIZE);
     glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
 
     glShadeModel(GL_SMOOTH);
     glEnable(GL_CULL_FACE);
