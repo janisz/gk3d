@@ -1,3 +1,4 @@
+#include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <cmath>
 #include <cstdio>
@@ -8,6 +9,7 @@
 #include "Scene.h"
 #include "Fog.h"
 #include "Texture.h"
+#include "Shader.h"
 
 void Display();
 
@@ -81,6 +83,9 @@ int main(int argc, char **argv) {
     g_texture_check = LoadTexture("./resources/textures/check.png");
     g_texture_wood = LoadTexture("./resources/textures/wood.png");
     g_texture_net = LoadTexture("./resources/textures/net.png");
+
+    GLuint program = LoadShader("./src/SpotLight.vert", "./src/SpotLight.frag");
+    glUseProgram(program);
 
     glutTimerFunc(1, Timer, 0);
     glutMainLoop();
