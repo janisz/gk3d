@@ -31,7 +31,7 @@ void Light0() {
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
     glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 15);
     glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 5);
-    GLfloat light_direction[] = {-19, -14, 10};
+    GLfloat light_direction[] = {-19, -17, 10};
     glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light_direction);
 }
 
