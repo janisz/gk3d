@@ -1,33 +1,34 @@
-#version 150
- 
-in vec3 position;
-in vec3 vN;
- 
-in vec4 AmbientDiffuseColor;
-in vec4 SpecularColor;
-in float SpecularExponent;
- 
-uniform vec4 light_position;
-uniform vec4 light_color;
-uniform vec4 ambient_light;
- 
-out vec4  fColor;
- 
-void main()
-{
- 
-	vec3 L = normalize( light_position.xyz - position.xyz);
-	vec3 E = normalize(-position.xyz);
-	vec3 N = normalize(vN);
- 
- 
-	vec3 H = normalize(L+E);
-	vec4 amb = AmbientDiffuseColor * ambient_light;
-	vec4 diff = max(dot(L,N), 0.0) * AmbientDiffuseColor * light_color;
-	vec4 spec = pow( max (dot(N,H), 0.0), SpecularExponent) *  SpecularColor * light_color  ;
-	if(dot(L,N) < 0.0){
-		spec = vec4(1,0,0,1);
-	}
-	fColor = amb + diff + spec;
- 
+varying vec3 N;
+varying vec3 v; 
+
+#define MAX_LIGHTS 3 
+
+void main (void) 
+{ 
+   vec3 N = normalize(N);
+   vec4 finalColor = vec4(0.0, 0.0, 0.0, 0.0);
+   
+   for (int i=0;i<MAX_LIGHTS;i++)
+   {
+      vec3 L = normalize(gl_LightSource[i].position.xyz - v); 
+      vec3 E = normalize(-v); // we are in Eye Coordinates, so EyePos is (0,0,0) 
+      vec3 R = normalize(-reflect(L,N)); 
+   
+      //calculate Ambient Term: 
+      vec4 Iamb = gl_FrontLightProduct[i].ambient; 
+
+      //calculate Diffuse Term: 
+      vec4 Idiff = gl_FrontLightProduct[i].diffuse * max(dot(N,L), 0.0);
+      Idiff = clamp(Idiff, 0.0, 1.0); 
+   
+      // calculate Specular Term:
+      vec4 Ispec = gl_FrontLightProduct[i].specular 
+             * pow(max(dot(R,E),0.0),0.3*gl_FrontMaterial.shininess);
+      Ispec = clamp(Ispec, 0.0, 1.0); 
+   
+      finalColor += Iamb + Idiff + Ispec;
+   }
+   
+   // write Total Color: 
+   gl_FragColor = gl_FrontLightModelProduct.sceneColor + finalColor; 
 }

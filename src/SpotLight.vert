@@ -1,13 +1,11 @@
-varying vec3 normal, lightDir, eyeVec;
+varying vec3 N;
+varying vec3 v;
 
-void main()
-{	
-	normal = gl_NormalMatrix * gl_Normal;
+void main(void)  
+{     
+   v = vec3(gl_ModelViewMatrix * gl_Vertex);       
+   N = normalize(gl_NormalMatrix * gl_Normal);
 
-	vec3 vVertex = vec3(gl_ModelViewMatrix * gl_Vertex);
-
-	lightDir = vec3(gl_LightSource[0].position.xyz - vVertex);
-	eyeVec = -vVertex;
-
-	gl_Position = ftransform();		
+   gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;  
 }
+          

@@ -4,14 +4,15 @@
 float spotLightBlueValue = 0.0;
 
 void SpotLight() {
+    glEnable(GL_NORMALIZE);
     GLfloat specular[] = {1.0, 0, 0, 1.0};
-//    glLightfv(GL_LIGHT2, GL_SPECULAR, specular);
+    glLightfv(GL_LIGHT2, GL_SPECULAR, specular);
     spotLightBlueValue += 0.01;
     spotLightBlueValue = spotLightBlueValue > 1 ? 0 : spotLightBlueValue;
     GLfloat ambient[] = {0, 0, spotLightBlueValue, 1.0f};
     glLightfv(GL_LIGHT2, GL_AMBIENT, ambient);
     GLfloat diffuse[] = {0.5, 0.5, 0.5, 1.0};
-//    glLightfv(GL_LIGHT2, GL_DIFFUSE, diffuse);
+    glLightfv(GL_LIGHT2, GL_DIFFUSE, diffuse);
     GLfloat light_position[] = {3, 1, -4, 1.0};
     glLightfv(GL_LIGHT2, GL_POSITION, light_position);
     glLightf(GL_LIGHT2, GL_CONSTANT_ATTENUATION, 1.5);
@@ -20,18 +21,18 @@ void SpotLight() {
 }
 
 void Light0() {
-//    GLfloat specular[] = {0.5, 0.5, 0.5, 1.0};
-//    glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
-//    GLfloat ambient[] = {0.2f, 0.2f, 0.2f, 1.0f};
-//    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-//    GLfloat diffuse[] = {0.5, 0.5, 0.5, 1.0};
-//    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
-//    GLfloat light_position[] = {19, 14.0, -10, 1.0};
-//    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-//    glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 15);
-//    glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 5);
-//    GLfloat light_direction[] = {-19, -14, 10};
-//    glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light_direction);
+    GLfloat specular[] = {0.5, 0.5, 0.5, 1.0};
+    glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+    GLfloat ambient[] = {0.2f, 0.2f, 0.2f, 1.0f};
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+    GLfloat diffuse[] = {0.5, 0.5, 0.5, 1.0};
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+    GLfloat light_position[] = {19, 14.0, -10, 1.0};
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 15);
+    glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 5);
+    GLfloat light_direction[] = {-19, -14, 10};
+    glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light_direction);
 }
 
 void Light1() {
@@ -43,7 +44,7 @@ void Light1() {
     glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse);
     GLfloat light_position[] = {1, 1.0, -10, 1.0};
     glLightfv(GL_LIGHT1, GL_POSITION, light_position);
-    glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 1);
+    glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 15);
     glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 5);
     GLfloat light_direction[] = {0, 0, -1};
     glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, light_direction);
@@ -63,16 +64,17 @@ void Light() {
     glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
     glMaterialf(GL_FRONT, GL_SHININESS, mat_shininess);
 
+
     Light0();
-    Light1();
-    SpotLight();
+//    Light1();
+//    SpotLight();
 
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT, GL_AMBIENT);
 
     glEnable(GL_LIGHTING);
-//    glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHT1);
+    glEnable(GL_LIGHT0);
+//    glEnable(GL_LIGHT1);
 //    glEnable(GL_LIGHT2);
     glEnable(GL_DEPTH_TEST);   // Hidden surface removal
     glFrontFace(GL_CCW);       // Counterclockwise polygons face out
