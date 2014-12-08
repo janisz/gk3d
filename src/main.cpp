@@ -33,6 +33,7 @@ bool g_shift_down = false;
 
 bool g_fps_mode = false;
 bool g_fog_mode = false;
+bool g_clip_mode = false;
 
 int g_viewport_width = 0;
 int g_viewport_height = 0;
@@ -102,12 +103,31 @@ void Display(void) {
 
     glColor3f(0, 1, 0);
 
-    Grid();
-    Hall();
-    Net();
-    People();
-    Light();
-    Fog();
+    GLdouble plane_eq0[4] = {1.0, 0.0, 1.0, 0.0};
+    GLdouble plane_eq1[4] = {-1.0, 0.0, -1.0, 0.0};
+
+    glClipPlane(GL_CLIP_PLANE0, plane_eq0);
+    glClipPlane(GL_CLIP_PLANE1, plane_eq1);
+
+    for (int i = 0; i < 2; i++) {
+        if (i == 0) {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        } else {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        }
+
+        // włączenie płaszczyzny obcinającej
+        glEnable((GLenum) (GL_CLIP_PLANE0 + i));
+        // wyłączenie płaszczyzny obcinającej
+        glDisable((GLenum) (GL_CLIP_PLANE1 - i));
+
+        Grid();
+        Hall();
+        Net();
+        People();
+        Light();
+        Fog();
+    }
 
 
     glutSwapBuffers(); //swap the buffers
@@ -135,6 +155,7 @@ void Keyboard(unsigned char key, int x, int y) {
 
         if (g_fps_mode) {
             g_fog_mode = false;
+            g_clip_mode = false;
             glutSetCursor(GLUT_CURSOR_NONE);
             glutWarpPointer(g_viewport_width / 2, g_viewport_height / 2);
         }
@@ -144,6 +165,13 @@ void Keyboard(unsigned char key, int x, int y) {
     }
     if (toupper(key) == 'F') {
         g_fog_mode = true;
+        g_fps_mode = false;
+        g_clip_mode = false;
+        glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
+    }
+    if (toupper(key) == 'C') {
+        g_clip_mode = true;
+        g_fog_mode = false;
         g_fps_mode = false;
         glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
     }
@@ -159,23 +187,23 @@ void KeyboardUp(unsigned char key, int x, int y) {
 
 void configureCameraGlobals() {
     if (g_key['w'] || g_key['W']) {
-            g_camera.Move(g_translation_speed);
-        }
-        else if (g_key['s'] || g_key['S']) {
-            g_camera.Move(-g_translation_speed);
-        }
-        else if (g_key['a'] || g_key['A']) {
-            g_camera.Strafe(g_translation_speed);
-        }
-        else if (g_key['d'] || g_key['D']) {
-            g_camera.Strafe(-g_translation_speed);
-        }
-        else if (g_mouse_left_down) {
-            g_camera.Fly(-g_translation_speed);
-        }
-        else if (g_mouse_right_down) {
-            g_camera.Fly(g_translation_speed);
-        }
+        g_camera.Move(g_translation_speed);
+    }
+    else if (g_key['s'] || g_key['S']) {
+        g_camera.Move(-g_translation_speed);
+    }
+    else if (g_key['a'] || g_key['A']) {
+        g_camera.Strafe(g_translation_speed);
+    }
+    else if (g_key['d'] || g_key['D']) {
+        g_camera.Strafe(-g_translation_speed);
+    }
+    else if (g_mouse_left_down) {
+        g_camera.Fly(-g_translation_speed);
+    }
+    else if (g_mouse_right_down) {
+        g_camera.Fly(g_translation_speed);
+    }
 }
 
 void Timer(int value) {

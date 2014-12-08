@@ -9,7 +9,7 @@ varying vec2 vTexCoord;
 void main() {
     vec3 n, halfV;
     float NdotL, NdotHV;
-    vec4 color = ambientGlobal * texture2D(myTexture, vTexCoord).bgra;
+    vec4 color = ambientGlobal * texture2D(myTexture, vTexCoord).rgba;
     float att, spotEffect;
 
     /* a fragment shader can't write a verying variable, hence we need
