@@ -45,6 +45,8 @@ bool g_mouse_right_down = false;
 const float g_translation_speed = 0.2;
 const float g_rotation_speed = M_PI / 180 * 0.1;
 
+float g_clip_x = 1.0;
+
 GLuint g_texture_wood;
 GLuint g_texture_check;
 GLuint g_texture_net;
@@ -103,8 +105,8 @@ void Display(void) {
 
     glColor3f(0, 1, 0);
 
-    GLdouble plane_eq0[4] = {1.0, 0.0, 1.0, 0.0};
-    GLdouble plane_eq1[4] = {-1.0, 0.0, -1.0, 0.0};
+    GLdouble plane_eq0[4] = {g_clip_x, 0.0, 1.0, 0.0};
+    GLdouble plane_eq1[4] = {-g_clip_x, 0.0, -1.0, 0.0};
 
     glClipPlane(GL_CLIP_PLANE0, plane_eq0);
     glClipPlane(GL_CLIP_PLANE1, plane_eq1);
@@ -206,12 +208,24 @@ void configureCameraGlobals() {
     }
 }
 
+void configureClipGlobals() {
+    if (g_key['w'] || g_key['W']) {
+        g_clip_x += 0.1;
+    }
+    else if (g_key['s'] || g_key['S']) {
+        g_clip_x -= 0.1;
+    }
+}
+
 void Timer(int value) {
     if (g_fps_mode) {
         configureCameraGlobals();
     }
-    if (g_fog_mode) {
+    else if (g_fog_mode) {
         ConfigureFogGlobals();
+    }
+    else if (g_clip_mode) {
+        configureClipGlobals();
     }
 
     glutTimerFunc(1, Timer, 0);
