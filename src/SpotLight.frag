@@ -1,7 +1,8 @@
-varying vec4 diffuse,ambientGlobal, ambient, ecPos;
-varying vec3 normal,halfVector;
+varying vec4 ambientGlobal, ecPos;
+varying vec3 normal;
 
- 
+#define LIGHT_COUNT 4
+
 void main()
 {
     vec3 n,halfV;
@@ -12,31 +13,41 @@ void main()
     /* a fragment shader can't write a verying variable, hence we need
     a new variable to store the normalized interpolated normal */
     n = normalize(normal);
-     
-    // Compute the ligt direction
-    vec3 lightDir = vec3(gl_LightSource[0].position-ecPos);
-     
-    /* compute the distance to the light source to a varying variable*/
-    float dist = length(lightDir);
- 
-    /* compute the dot product between normal and ldir */
-    NdotL = max(dot(n,normalize(lightDir)),0.0);
- 
-    if (NdotL > 0.0) {
-     
-        spotEffect = dot(normalize(gl_LightSource[0].spotDirection), normalize(-lightDir));
-        if (spotEffect > 0.999) {
-            spotEffect = pow(spotEffect, gl_LightSource[0].spotExponent);
-            att = spotEffect / (gl_LightSource[0].constantAttenuation +
-                    //gl_LightSource[0].linearAttenuation * dist +
-                    gl_LightSource[0].quadraticAttenuation * dist * dist);
-                 
-            color += att * (diffuse * NdotL + ambient);
-         
-             
-            halfV = normalize(halfVector);
-            NdotHV = max(dot(n,halfV),0.0);
-            color += att * gl_FrontMaterial.specular * gl_LightSource[0].specular * pow(NdotHV,gl_FrontMaterial.shininess);
+
+    for (int i = 0; i < LIGHT_COUNT; i++) {
+
+        ///* Compute the diffuse, ambient and globalAmbient terms */
+        vec4 diffuse = gl_FrontMaterial.diffuse * gl_LightSource[i].diffuse;
+        vec4 ambient = gl_FrontMaterial.ambient * gl_LightSource[i].ambient;
+
+        /* Normalize the halfVector to pass it to the fragment shader */
+        vec3 halfVector = gl_LightSource[i].halfVector.xyz;
+
+        // Compute the ligt direction
+        vec3 lightDir = vec3(gl_LightSource[i].position - ecPos);
+
+        /* compute the distance to the light source to a varying variable*/
+        float dist = length(lightDir);
+
+        /* compute the dot product between normal and ldir */
+        NdotL = max(dot(n, normalize(lightDir)), 0.0);
+
+        if (NdotL > 0.0) {
+
+            spotEffect = dot(normalize(gl_LightSource[i].spotDirection), normalize(-lightDir));
+            if (spotEffect > 0.999) {
+                spotEffect = pow(spotEffect, gl_LightSource[i].spotExponent);
+                att = spotEffect / (gl_LightSource[i].constantAttenuation +
+                        //gl_LightSource[i].linearAttenuation * dist +
+                                gl_LightSource[i].quadraticAttenuation * dist * dist);
+
+                color += att * (diffuse * NdotL + ambient);
+
+
+                halfV = normalize(halfVector);
+                NdotHV = max(dot(n, halfV), 0.0);
+                color += att * gl_FrontMaterial.specular * gl_LightSource[i].specular * pow(NdotHV, gl_FrontMaterial.shininess);
+            }
         }
     }
  

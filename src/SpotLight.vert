@@ -1,5 +1,5 @@
-varying vec4 diffuse,ambientGlobal,ambient, ecPos;
-varying vec3 normal,halfVector;
+varying vec4 ambientGlobal, ecPos;
+varying vec3 normal;
  
 void main()
 {  
@@ -10,15 +10,10 @@ void main()
  
     /* compute the vertex position  in camera space. */
     ecPos = gl_ModelViewMatrix * gl_Vertex;
- 
-    /* Normalize the halfVector to pass it to the fragment shader */
-    halfVector = gl_LightSource[0].halfVector.xyz;
-     
-    /* Compute the diffuse, ambient and globalAmbient terms */
-    diffuse = gl_FrontMaterial.diffuse * gl_LightSource[0].diffuse;
-    ambient = gl_FrontMaterial.ambient * gl_LightSource[0].ambient;
+
+    /* Compute the globalAmbient terms */
     ambientGlobal = gl_LightModel.ambient * gl_FrontMaterial.ambient;
-     
-         
+
+
     gl_Position = ftransform();
 } 
