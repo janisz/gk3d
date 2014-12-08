@@ -3,6 +3,7 @@
 #include <cmath>
 #include <cstdio>
 #include <iostream>
+#include <GL/gl.h>
 
 #include "Camera.h"
 #include "Light.h"
@@ -26,6 +27,8 @@ void Mouse(int button, int state, int x, int y);
 void Timer(int value);
 
 void Idle();
+
+void drawScene();
 
 Camera g_camera;
 bool g_key[256];
@@ -111,6 +114,41 @@ void Display(void) {
     glClipPlane(GL_CLIP_PLANE0, plane_eq0);
     glClipPlane(GL_CLIP_PLANE1, plane_eq1);
 
+    /* Draw reflected scene first */
+
+    glPushMatrix ();
+    /* Mirrors lies in YZ plane, so scale by -1.0 in X axis */
+    glScalef (-1., 1., 1.);
+    /* Mirror is 2.0 units from origin, so translate by 4.0 */
+    glTranslatef (4., 0., 0.);
+    drawScene();
+    glPopMatrix ();
+
+    /* draw mirror */
+    glClear (GL_DEPTH_BUFFER_BIT);
+    glPushAttrib (0xffffffff);
+    glDisable (GL_LIGHTING);
+    /* Create imperfect reflector effect by blending a black
+       mirror over the reflected scene with alpha of 0.05 */
+    glEnable (GL_BLEND);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor4f (0., 0., 0., 0.05);
+    glBegin (GL_QUADS);
+    glVertex3f (-2., 1., 3.);
+    glVertex3f (-2., -1., 3.);
+    glVertex3f (-2., -1., -2.5);
+    glVertex3f (-2., 1., -2.5);
+    glEnd ();
+    glPopAttrib();
+
+    /* Draw the real scene */
+    drawScene();
+
+
+    glutSwapBuffers(); //swap the buffers
+}
+
+void drawScene() {
     for (int i = 0; i < 2; i++) {
         if (i == 0) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -130,9 +168,6 @@ void Display(void) {
         Light();
         Fog();
     }
-
-
-    glutSwapBuffers(); //swap the buffers
 }
 
 void Reshape(int w, int h) {
