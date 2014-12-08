@@ -53,7 +53,13 @@ void main() {
         }
     }
 
+    // Linear fog
+    //float fogFactor = (gl_Fog.end - gl_FogFragCoord) * gl_Fog.scale;
+    // Exp fog
+    //float fogFactor = exp(-gl_Fog.density * gl_FogFragCoord);
+    // Exp2 fog
     float fogFactor = exp(-pow((gl_Fog.density * gl_FogFragCoord), 2.0));
+
     fogFactor = clamp(fogFactor, 0.0, 1.0);
     gl_FragColor = mix(gl_Fog.color, color, fogFactor);
 }

@@ -18,17 +18,18 @@ void Fog() {
     GLuint fogMode[]= { GL_EXP, GL_EXP2, GL_LINEAR };   // Storage For Three Types Of Fog
     GLfloat fogColor[4]= {0.5f, 0.5f, 0.5f, 1.0f};      // Fog Color
 
+    if (g_fog_enabled) { /*HACK*/
+        glFogf(GL_FOG_DENSITY, g_fog_density);              // How Dense Will The Fog Be
+    } else {
+        glFogf(GL_FOG_DENSITY, 0);
+    }
+
+    glEnable(GL_FOG);                   // Enables GL_FOG
     glFogi(GL_FOG_MODE, fogMode[g_fog_filter]);        // Fog Mode
     glFogfv(GL_FOG_COLOR, fogColor);            // Set Fog Color
-    glFogf(GL_FOG_DENSITY, g_fog_density);              // How Dense Will The Fog Be
     glHint(GL_FOG_HINT, GL_DONT_CARE);          // Fog Hint Value
     glFogf(GL_FOG_START, g_fog_min_distance);             // Fog Start Depth
     glFogf(GL_FOG_END, g_fog_max_distance);               // Fog End Depth
-    if (g_fog_enabled) {
-        glEnable(GL_FOG);                   // Enables GL_FOG
-    } else {
-        glDisable(GL_FOG);
-    }
 }
 
 void printFogGlobals() {
