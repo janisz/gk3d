@@ -15,6 +15,8 @@ void SpotLight() {
     glLightfv(GL_LIGHT2, GL_DIFFUSE, diffuse);
     GLfloat light_position[] = {3, 1, -4, 1.0};
     glLightfv(GL_LIGHT2, GL_POSITION, light_position);
+    GLfloat light_direction[] = {0, -1, 0};
+    glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, light_direction);
     glLightf(GL_LIGHT2, GL_CONSTANT_ATTENUATION, 1.5);
     glLightf(GL_LIGHT2, GL_LINEAR_ATTENUATION, .5);
     glLightf(GL_LIGHT2, GL_QUADRATIC_ATTENUATION, .2);
@@ -29,8 +31,7 @@ void Light0() {
     glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
     GLfloat light_position[] = {19, 14.0, -10, 1.0};
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-    glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 15);
-    glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 5);
+    glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 51);
     GLfloat light_direction[] = {-19, -17, 10};
     glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light_direction);
 }
@@ -44,7 +45,6 @@ void Light1() {
     glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse);
     GLfloat light_position[] = {-10, 14.0, -10, 1.0};
     glLightfv(GL_LIGHT1, GL_POSITION, light_position);
-    glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 15);
     glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 5);
     GLfloat light_direction[] = {14, -14.5f, 8};
     glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, light_direction);

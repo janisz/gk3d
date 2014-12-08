@@ -1,15 +1,17 @@
-varying vec4 ambientGlobal, ecPos;
-varying vec3 normal;
+varying vec4
+ambientGlobal,
+ecPos;
+varying vec3
+normal;
 
 #define LIGHT_COUNT 4
 
-void main()
-{
-    vec3 n,halfV;
-    float NdotL,NdotHV;
+void main() {
+    vec3 n, halfV;
+    float NdotL, NdotHV;
     vec4 color = ambientGlobal;
-    float att,spotEffect;
-     
+    float att, spotEffect;
+
     /* a fragment shader can't write a verying variable, hence we need
     a new variable to store the normalized interpolated normal */
     n = normalize(normal);
@@ -35,11 +37,11 @@ void main()
         if (NdotL > 0.0) {
 
             spotEffect = dot(normalize(gl_LightSource[i].spotDirection), normalize(-lightDir));
-            if (spotEffect > 0.999) {
+            if (spotEffect > 0.999 || i == 2 /*HACK*/) {
                 spotEffect = pow(spotEffect, gl_LightSource[i].spotExponent);
                 att = spotEffect / (gl_LightSource[i].constantAttenuation +
-                        //gl_LightSource[i].linearAttenuation * dist +
-                                gl_LightSource[i].quadraticAttenuation * dist * dist);
+                        gl_LightSource[i].linearAttenuation * dist +
+                        gl_LightSource[i].quadraticAttenuation * dist * dist);
 
                 color += att * (diffuse * NdotL + ambient);
 
@@ -50,6 +52,6 @@ void main()
             }
         }
     }
- 
+
     gl_FragColor = color;
 }
