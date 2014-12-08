@@ -17,9 +17,11 @@ GK3D [![Build Status](https://travis-ci.org/janisz/gk3d.svg?branch=master)](http
 | Key                | Action             |
 |--------------------|--------            |
 |`SPACEBAR`          | toggle FPS control |
-|`W`                 | forward or increase fog min distnace |
+|`F`                 | toggle FOG control |
+|`C`                 | toggle clipping control |
+|`W`                 | forward or increase fog min distnace  or increase X clip axis|
 |`A`                 | left or decrease fog max distance    |
-|`S`                 | backward or decrease fog min distance|
+|`S`                 | backward or decrease fog min distance or decrease X clip axis|
 |`D`                 | right or increase for max distnace   |
 | mouse              | look around        |
 | left mouse button  | up                 |
