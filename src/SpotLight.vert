@@ -1,8 +1,11 @@
 varying vec4 ambientGlobal, ecPos;
 varying vec3 normal;
+varying vec2 vTexCoord;
  
 void main()
-{  
+{
+    vTexCoord = gl_MultiTexCoord0.xy;
+
     vec3 aux;
      
     /* first transform the normal into eye space and normalize the result */

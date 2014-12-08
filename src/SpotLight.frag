@@ -1,15 +1,15 @@
-varying vec4
-ambientGlobal,
-ecPos;
-varying vec3
-normal;
+varying vec4 ambientGlobal, ecPos;
+varying vec3, normal;
+uniform sampler2D myTexture;
+
+varying vec2 vTexCoord;
 
 #define LIGHT_COUNT 4
 
 void main() {
     vec3 n, halfV;
     float NdotL, NdotHV;
-    vec4 color = ambientGlobal;
+    vec4 color = ambientGlobal * texture2D(myTexture, vTexCoord).bgra;
     float att, spotEffect;
 
     /* a fragment shader can't write a verying variable, hence we need
